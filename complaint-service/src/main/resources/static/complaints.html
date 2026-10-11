@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CyberShield | My Complaints</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f7fc;color:#1b2a41}
+a{text-decoration:none;color:inherit}
+.app{display:flex;min-height:100vh}
+.sidebar{width:260px;flex-shrink:0;padding:24px 18px;background:#142542;color:white}
+.brand{font-size:25px;font-weight:bold;margin:12px 8px 44px}
+.nav-label{margin:25px 12px 12px;color:#a9bfdc;font-size:12px;font-weight:bold;letter-spacing:1px}
+.nav a{display:block;padding:14px;margin:5px 0;border-radius:9px;color:#edf5ff}
+.nav a:hover,.nav a.active{background:#294267}
+.main{flex:1;min-width:0;padding:35px}
+.header{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}
+h1{margin:0 0 10px;font-size:32px}
+h2{margin-top:0}
+.muted{color:#647894;line-height:1.6}
+.portal{background:white;border:1px solid #dce6f2;border-radius:30px;padding:12px 17px}
+.card{background:white;border:1px solid #dce6f2;border-radius:15px;padding:25px;box-shadow:0 4px 16px #1d35570a}
+.search-row{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0}
+input,select{padding:12px;border:1px solid #cbd8e8;border-radius:8px;font:inherit;background:white;color:#1b2a41}
+#searchInput{flex:1;min-width:200px}
+button,.btn{display:inline-block;padding:12px 16px;border:0;border-radius:8px;background:#1677c8;color:white;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+.secondary{background:#e8eef6;color:#23466d}
+.table-wrap{overflow-x:auto;border:1px solid #dce6f2;border-radius:10px}
+table{width:100%;min-width:800px;border-collapse:collapse}
+th,td{text-align:left;padding:14px;border-bottom:1px solid #e9eff6;vertical-align:top}
+th{background:#f8fbff;color:#536985;font-size:13px}
+tbody tr:last-child td{border-bottom:0}
+.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:bold;white-space:nowrap}
+.low{background:#e6f6ec;color:#18794e}
+.medium{background:#fff4d6;color:#8a5b00}
+.high{background:#ffebe9;color:#b42318}
+.status{background:#eef2f7;color:#46566b}
+.empty{padding:35px;text-align:center;color:#647894}
+.message{padding:14px;border-radius:8px;margin:14px 0;line-height:1.5;overflow-wrap:anywhere}
+.error{background:#fff0ef;color:#9b1c16}
+.success{background:#e8f7ee;color:#176b42}
+.footer-note{margin-top:20px;color:#647894;font-size:12px;line-height:1.6}
+@media(max-width:760px){.app{display:block}.sidebar{width:100%;padding:15px}.brand{margin:8px}.nav{display:flex;overflow-x:auto}.nav-label{display:none}.nav a{white-space:nowrap}.main{padding:20px 14px}.header{align-items:flex-start;flex-direction:column}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">🛡️ CyberShield</div>
+  <div class="nav-label">WORKSPACE</div>
+  <nav class="nav">
+    <a href="/index.html">▦ Dashboard</a>
+    <a href="/complaint-new.html">✚ File a Complaint</a>
+    <a href="/complaints.html" class="active">▤ My Complaints</a>
+  </nav>
+  <div class="nav-label">INFORMATION</div>
+  <nav class="nav">
+    <a href="/ai-analysis.html">✧ AI Assessment</a>
+    <a href="/investigations.html">🔎 Investigations</a>
+    <a href="/evidence.html">📁 Evidence</a>
+    <a href="/reports.html">📊 Reports</a>
+    <a href="/historical.html">◷ Historical Complaints</a>
+    <a href="/alerts.html">🚨 Alerts &amp; Escalation</a>
+    <a href="/help.html">ⓘ Help &amp; Safety</a>
+  </nav>
+</aside>
+
+<main class="main">
+<header class="header">
+  <div>
+    <h1>My Complaints</h1>
+    <p class="muted">View and search complaints returned by the CyberShield backend.</p>
+  </div>
+  <div class="portal">🛡️ Cybercrime Portal</div>
+</header>
+
+<section class="card">
+  <h2>Complaint Records</h2>
+  <p class="muted">Records are loaded from the Spring Boot API. Search and filters apply to the returned database records.</p>
+
+  <div id="message" role="alert" aria-live="polite"></div>
+
+  <div class="search-row">
+    <input id="searchInput" type="search" placeholder="Search by ID, category, description or status">
+    <select id="priorityFilter" aria-label="Filter by priority">
+      <option value="">All priorities</option>
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+      <option value="critical">Critical</option>
+    </select>
+    <button id="refreshBtn" type="button">Refresh</button>
+  </div>
+
+  <p id="recordCount" class="muted">Loading complaints…</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Category</th><th>Description</th>
+          <th>Loss Amount</th><th>Priority</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="complaintsBody">
+        <tr><td colspan="6" class="empty">Connecting to backend…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="footer-note">
+    Backend endpoint: http://localhost:8092/api/complaints.
+    If the request returns HTTP 403, review Spring Security and API permissions.
+  </p>
+</section>
+</main>
+</div>
+
+<script>
+"use strict";
+
+/*
+ * Backend configuration.
+ * Spring Boot is running on port 8092.
+ * If this HTML is served from a different origin, configure CORS in Spring Boot.
+ */
+const API_BASE = "http://localhost:8092";
+const API_URL = `${API_BASE}/api/complaints`;
+
+const $ = id => document.getElementById(id);
+let allComplaints = [];
+let requestFailed = false;
+
+function valueOf(record, ...keys) {
+  for (const key of keys) {
+    if (record && record[key] !== undefined &&
+        record[key] !== null && record[key] !== "") {
+      return record[key];
+    }
+  }
+  return "";
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[ch]);
+}
+
+function formatMoney(value) {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "—";
+  return new Intl.NumberFormat("en-IN", {
+    style:"currency", currency:"INR", maximumFractionDigits:2
+  }).format(amount);
+}
+
+function getPriority(c) {
+  return String(valueOf(c, "priority", "severity", "riskLevel") || "Pending");
+}
+
+function priorityClass(value) {
+  const p = String(value).toLowerCase();
+  if (p.includes("critical") || p.includes("high")) return "high";
+  if (p.includes("medium") || p.includes("moderate")) return "medium";
+  if (p.includes("low")) return "low";
+  return "status";
+}
+
+function showMessage(text, type = "error") {
+  $("message").innerHTML = text
+    ? `<div class="message ${type}">${escapeHtml(text)}</div>`
+    : "";
+}
+
+function extractRecords(body) {
+  if (Array.isArray(body)) return body;
+  if (!body || typeof body !== "object") return [];
+
+  for (const key of ["content", "data", "records", "items", "complaints"]) {
+    if (Array.isArray(body[key])) return body[key];
+  }
+
+  // A single complaint object is accepted only if it resembles a complaint.
+  if ("id" in body || "complaintId" in body) return [body];
+  return [];
+}
+
+async function loadComplaints() {
+  $("refreshBtn").disabled = true;
+  $("recordCount").textContent = "Loading complaints…";
+  $("complaintsBody").innerHTML =
+    '<tr><td colspan="6" class="empty">Connecting to backend…</td></tr>';
+  showMessage("");
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "GET",
+      headers: { "Accept": "application/json" },
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      let detail = "";
+      try {
+        detail = (await response.text()).slice(0, 250);
+      } catch (_) {}
+
+      if (response.status === 403) {
+        throw new Error(
+          "HTTP 403 Forbidden. The backend is refusing access. Check Spring Security, authentication and API permissions."
+        );
+      }
+      if (response.status === 401) {
+        throw new Error(
+          "HTTP 401 Unauthorized. This endpoint requires authentication."
+        );
+      }
+      throw new Error(
+        `API returned HTTP ${response.status}${detail ? " — " + detail : ""}`
+      );
+    }
+
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      throw new Error(
+        "The API did not return JSON. Check the backend URL and endpoint mapping."
+      );
+    }
+
+    const body = await response.json();
+    allComplaints = extractRecords(body);
+    requestFailed = false;
+    showMessage("");
+
+    renderComplaints();
+
+    if (!allComplaints.length) {
+      $("recordCount").textContent = "0 complaint(s) found in the API response.";
+      showMessage(
+        "The API responded successfully but returned no complaint records. Check whether your database contains complaints.",
+        "success"
+      );
+    }
+  } catch (error) {
+    requestFailed = true;
+    allComplaints = [];
+    $("complaintsBody").innerHTML =
+      `<tr><td colspan="6" class="empty">${escapeHtml(error.message || "Could not load complaints.")}</td></tr>`;
+    $("recordCount").textContent = "Could not load database records.";
+    showMessage(
+      `${error.message || "Could not connect to the backend."} ` +
+      "Check that Spring Boot is running on port 8092. If using Live Server, configure CORS in Spring Boot."
+    );
+    console.error("CyberShield complaints API error:", error);
+  } finally {
+    $("refreshBtn").disabled = false;
+  }
+}
+
+function renderComplaints() {
+  const search = $("searchInput").value.trim().toLowerCase();
+  const priority = $("priorityFilter").value.toLowerCase();
+
+  const filtered = allComplaints.filter(c => {
+    const searchable = [
+      valueOf(c, "id", "complaintId"),
+      valueOf(c, "category", "complaintCategory", "type"),
+      valueOf(c, "description", "details", "complaintDescription"),
+      valueOf(c, "status", "complaintStatus"),
+      getPriority(c),
+      valueOf(c, "lossAmount", "amountLost")
+    ].join(" ").toLowerCase();
+
+    const p = getPriority(c).toLowerCase();
+    return searchable.includes(search) && (!priority || p.includes(priority));
+  });
+
+  $("recordCount").textContent =
+    `${filtered.length} complaint(s) found` +
+    (filtered.length !== allComplaints.length
+      ? ` (${allComplaints.length} total loaded)` : "");
+
+  if (!filtered.length) {
+    $("complaintsBody").innerHTML =
+      `<tr><td colspan="6" class="empty">${
+        allComplaints.length
+          ? "No complaints match your search or filter."
+          : "No complaint records were returned."
+      }</td></tr>`;
+    return;
+  }
+
+  $("complaintsBody").innerHTML = filtered.map(c => {
+    const id = valueOf(c, "id", "complaintId") || "—";
+    const category = valueOf(c, "category", "complaintCategory", "type") || "Unclassified";
+    const description = valueOf(c, "description", "details", "complaintDescription") || "—";
+    const loss = valueOf(c, "lossAmount", "amountLost");
+    const priorityText = getPriority(c);
+    const status = valueOf(c, "status", "complaintStatus") || "—";
+
+    return `<tr>
+      <td>${escapeHtml(id)}</td>
+      <td>${escapeHtml(category)}</td>
+      <td>${escapeHtml(description)}</td>
+      <td>${loss === "" ? "—" : escapeHtml(formatMoney(loss))}</td>
+      <td><span class="badge ${priorityClass(priorityText)}">${escapeHtml(priorityText)}</span></td>
+      <td><span class="badge status">${escapeHtml(status)}</span></td>
+    </tr>`;
+  }).join("");
+}
+
+$("searchInput").addEventListener("input", renderComplaints);
+$("priorityFilter").addEventListener("change", renderComplaints);
+$("refreshBtn").addEventListener("click", loadComplaints);
+
+loadComplaints();
+</script>
+</body>
+</html>

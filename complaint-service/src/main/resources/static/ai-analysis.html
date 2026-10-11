@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberShield | AI Assessment</title>
+
+<style>
+*{box-sizing:border-box}
+:root{--navy:#101b35;--blue:#3549a5;--bg:#f3f7fc;--border:#dce6f2;--muted:#647894}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#192b46}
+a{text-decoration:none;color:inherit}
+.app{display:flex;min-height:100vh}
+.sidebar{width:276px;flex-shrink:0;background:var(--navy);color:#fff;padding:24px 17px;display:flex;flex-direction:column;min-height:100vh}
+.brand{display:flex;align-items:center;gap:12px;font-size:25px;font-weight:bold;padding:12px 10px 42px}
+.brand-icon{display:grid;place-items:center;width:43px;height:43px;border-radius:12px;background:#3549a5;font-size:25px}
+.nav-label{margin:18px 13px 12px;color:#a9bfdc;font-size:12px;font-weight:bold;letter-spacing:1.5px}
+.nav a{display:flex;align-items:center;gap:13px;padding:14px;border-radius:9px;margin:4px 0;color:#edf5ff;font-size:15px}
+.nav a:hover,.nav a.active{background:var(--blue)}
+.nav-icon{width:20px;text-align:center;font-size:17px}
+.sidebar-footer{margin-top:auto;padding:20px 10px 0;border-top:1px solid #2b3b57;font-size:13px}
+.sidebar-footer p{color:#a9bfdc;line-height:1.5;margin-bottom:0}
+.main{flex:1;min-width:0;padding:35px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:26px}
+h1{font-size:32px;margin:0 0 10px}
+h2{font-size:23px;margin:0 0 12px}
+h3{font-size:17px;margin-top:22px}
+p{line-height:1.6}
+.muted{color:var(--muted);line-height:1.6}
+.portal{background:white;border:1px solid var(--border);border-radius:30px;padding:13px 18px;white-space:nowrap}
+.notice{padding:16px;margin-bottom:22px;border:1px solid #bfdcff;border-radius:10px;background:#eef6ff;color:#174b8f;line-height:1.6}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.card{background:white;border:1px solid var(--border);border-radius:15px;padding:26px;box-shadow:0 4px 16px #1d35570a;min-width:0}
+.field{margin:20px 0}
+label{display:block;margin-bottom:8px;font-weight:bold}
+input,select,textarea{width:100%;padding:13px;border:1px solid #cbd8e8;border-radius:8px;font:inherit;background:#fff;color:#1b2a41}
+textarea{min-height:155px;resize:vertical;line-height:1.6}
+input:focus,select:focus,textarea:focus{outline:2px solid #c5e3ff;border-color:#1677c8}
+small{font-size:12px}
+button{padding:12px 17px;border:0;border-radius:8px;background:var(--blue);color:white;font-weight:bold;font-size:14px;cursor:pointer}
+button:hover{filter:brightness(.94)}
+button:disabled{opacity:.6;cursor:wait}
+.secondary{background:#eaf2fb;color:#23466d;border:1px solid #d4e2f2}
+.buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.result{border:1px solid var(--border);border-radius:12px;padding:20px;background:#f9fbfe;margin-top:18px}
+.result[hidden]{display:none}
+.empty{color:var(--muted);padding:20px 0;line-height:1.7}
+.badge{display:inline-block;padding:8px 13px;border-radius:20px;font-weight:bold;font-size:13px}
+.low{background:#e6f6ec;color:#18794e}
+.medium{background:#fff4d6;color:#8a5b00}
+.high{background:#ffebe9;color:#b42318}
+.meter{height:9px;background:#e5edf6;border-radius:20px;overflow:hidden;margin:15px 0}
+.meter-fill{height:100%;width:0;background:var(--blue);transition:width .25s}
+.reason-list{padding-left:22px;line-height:1.8}
+.message{display:none;margin-top:15px;padding:12px;border-radius:8px;line-height:1.5}
+.message.show{display:block}
+.error{background:#fff0ef;color:#9b1c16}
+.source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0}
+.source{padding:13px;border:1px solid var(--border);border-radius:9px;background:#fff;min-width:0}
+.source strong{display:block;font-size:24px;margin-bottom:6px}
+.source span{font-size:12px;color:var(--muted)}
+.footer-note{font-size:12px;color:var(--muted);line-height:1.6}
+@media(max-width:1100px){.grid{grid-template-columns:1fr}}
+@media(max-width:760px){
+  .app{display:block}
+  .sidebar{width:100%;min-height:auto;padding:14px}
+  .brand{padding:8px 8px 18px}
+  .nav{display:flex;overflow-x:auto}
+  .nav-label{display:none}
+  .nav a{white-space:nowrap;padding:12px}
+  .sidebar-footer{display:none}
+  .main{padding:20px 14px}
+  .header{align-items:flex-start;flex-direction:column}
+  .card{padding:18px}
+  .source-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="brand">
+    <span class="brand-icon">🛡️</span>CyberShield
+  </div>
+
+  <div class="nav-label">WORKSPACE</div>
+  <nav class="nav">
+    <a href="/index.html"><span class="nav-icon">▦</span>Dashboard</a>
+    <a href="/complaint-new.html"><span class="nav-icon">✚</span>File a Complaint</a>
+    <a href="/complaints.html"><span class="nav-icon">▤</span>My Complaints</a>
+  </nav>
+
+  <div class="nav-label">INFORMATION</div>
+  <nav class="nav">
+    <a href="/ai-analysis.html" class="active"><span class="nav-icon">✧</span>AI Assessment</a>
+    <a href="/investigations.html"><span class="nav-icon">🔎</span>Investigations</a>
+    <a href="/evidence.html"><span class="nav-icon">📁</span>Evidence</a>
+    <a href="/reports.html"><span class="nav-icon">📊</span>Reports</a>
+    <a href="/historical.html"><span class="nav-icon">◷</span>Historical Complaints</a>
+    <a href="/alerts.html"><span class="nav-icon">🚨</span>Alerts &amp; Escalation</a>
+    <a href="/help.html"><span class="nav-icon">ⓘ</span>Help &amp; Safety</a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <strong>Cybercrime Management</strong>
+    <p>Complaint and investigation workspace</p>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="header">
+    <div>
+      <h1>AI Assessment</h1>
+      <p class="muted">Analyze incident risk using incident details and available related records.</p>
+    </div>
+    <div class="portal">🛡️ Cybercrime Portal</div>
+  </header>
+
+  <div class="notice">
+    <strong>Risk assessment:</strong>
+    Select a saved complaint to receive a preliminary Low, Medium or High classification.
+    Incident description, crime type, financial loss and available related records contribute to the assessment.
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Select Complaint</h2>
+      <p class="muted">Choose an existing complaint. Its saved incident details will be loaded automatically.</p>
+
+      <form id="assessmentForm">
+        <div class="field">
+          <label for="complaintSelect">Select Existing Complaint *</label>
+          <select id="complaintSelect" required>
+            <option value="">Loading complaints...</option>
+          </select>
+          <small class="muted">Only existing complaints can be assessed on this page.</small>
+        </div>
+
+        <div class="field">
+          <label for="category">Incident Type</label>
+          <select id="category" required>
+            <option value="Online Fraud">Online Fraud</option>
+            <option value="UPI / Banking Fraud">UPI / Banking Fraud</option>
+            <option value="Phishing">Phishing</option>
+            <option value="Identity Theft">Identity Theft</option>
+            <option value="Cyber Harassment">Cyber Harassment</option>
+            <option value="Account Hacking">Account Hacking</option>
+            <option value="Ransomware / Malware">Ransomware / Malware</option>
+            <option value="Investment / Crypto Scam">Investment / Crypto Scam</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="loss">Reported Financial Loss (₹)</label>
+          <input id="loss" type="number" min="0" step="0.01" value="0" required>
+        </div>
+
+        <div class="field">
+          <label for="description">Incident Description *</label>
+          <textarea id="description" minlength="10" required
+            placeholder="The saved complaint description will appear here."></textarea>
+        </div>
+
+        <div id="errorMessage" class="message error" role="alert"></div>
+
+        <div class="buttons">
+          <button type="submit" id="assessBtn">🔍 Assess Complaint</button>
+          <button type="button" id="clearBtn" class="secondary">Clear</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Assessment Result</h2>
+      <p class="muted">Risk classification, supporting reasons, related records and next steps.</p>
+
+      <div id="emptyResult" class="empty">
+        Select an existing complaint and click <strong>Assess Complaint</strong>.
+      </div>
+
+      <div id="assessmentResult" class="result" hidden>
+        <p class="muted">PRELIMINARY RISK CLASSIFICATION</p>
+        <h2 id="levelText">—</h2>
+        <span id="levelBadge" class="badge low">Low</span>
+        <div class="meter"><div id="meterFill" class="meter-fill"></div></div>
+        <p id="summary"></p>
+
+        <h3>Why this result?</h3>
+        <ul id="reasons" class="reason-list"></ul>
+
+        <h3>Related records found</h3>
+        <div class="source-grid">
+          <div class="source"><strong id="evidenceCount">0</strong><span>Evidence records</span></div>
+          <div class="source"><strong id="investigationCount">0</strong><span>Investigations</span></div>
+          <div class="source"><strong id="historyCount">0</strong><span>Historical cases</span></div>
+        </div>
+        <p id="dataStatus" class="footer-note"></p>
+
+        <h3>Recommended next steps</h3>
+        <ul id="recommendations" class="reason-list"></ul>
+
+        <p id="assessedComplaint" class="muted"></p>
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+
+<script>
+"use strict";
+
+const COMPLAINT_API_URL = "/api/complaints";
+
+let complaintsCache = [];
+let complaintLoadError = "";
+
+const $ = id => document.getElementById(id);
+
+function field(object, ...names) {
+  for (const name of names) {
+    if (object && object[name] !== undefined && object[name] !== null) {
+      return object[name];
+    }
+  }
+  return "";
+}
+
+function showError(message) {
+  $("errorMessage").textContent = message;
+  $("errorMessage").classList.add("show");
+  $("errorMessage").style.display = "block";
+}
+
+function clearError() {
+  $("errorMessage").textContent = "";
+  $("errorMessage").classList.remove("show");
+  $("errorMessage").style.display = "none";
+}
+
+function addList(id, values) {
+  const list = $(id);
+  list.replaceChildren();
+
+  values.forEach(value => {
+    const item = document.createElement("li");
+    item.textContent = value;
+    list.appendChild(item);
+  });
+}
+
+function normalizeComplaintResponse(body) {
+  if (Array.isArray(body)) return body;
+
+  if (body && typeof body === "object") {
+    for (const key of ["content", "data", "records", "items"]) {
+      if (Array.isArray(body[key])) return body[key];
+    }
+  }
+
+  return [];
+}
+
+async function fetchComplaintsFromApi() {
+  const select = $("complaintSelect");
+  select.innerHTML = '<option value="">Loading complaints...</option>';
+  select.disabled = true;
+  clearError();
+
+  try {
+    const response = await fetch(COMPLAINT_API_URL, {
+      headers: { "Accept": "application/json" }
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const body = await response.json();
+    complaintsCache = normalizeComplaintResponse(body);
+    complaintLoadError = "";
+
+    refreshComplaintOptions();
+  } catch (error) {
+    console.error("Unable to load complaints from /api/complaints:", error);
+    complaintLoadError = error.message || "Unable to load complaints";
+    complaintsCache = [];
+
+    select.innerHTML = '<option value="">Could not load complaints</option>';
+    select.disabled = true;
+
+    showError(
+      "Could not load complaints. Confirm that your backend is running " +
+      "and that GET /api/complaints returns complaint records. Refresh to retry."
+    );
+  }
+}
+
+function refreshComplaintOptions() {
+  const select = $("complaintSelect");
+  const previous = select.value;
+
+  select.innerHTML = '<option value="">Select an existing complaint</option>';
+
+  complaintsCache.forEach((complaint, index) => {
+    const option = document.createElement("option");
+    const id = field(complaint, "id", "complaintId");
+    const value = String(id !== "" ? id : index);
+
+    const description = String(
+      field(complaint, "description", "details", "incidentDescription") || ""
+    ).trim();
+
+    const category = String(
+      field(complaint, "category", "incidentType", "crimeType") || "Other"
+    );
+
+    option.value = value;
+    option.textContent =
+      (id !== "" ? id : "Complaint " + (index + 1)) +
+      " — " + category +
+      " — " + (description ? description.slice(0, 70) : "No description");
+
+    select.appendChild(option);
+  });
+
+  select.disabled = false;
+
+  if (complaintsCache.length === 0) {
+    select.innerHTML = '<option value="">No complaints found</option>';
+    select.disabled = true;
+    return;
+  }
+
+  if ([...select.options].some(option => option.value === previous)) {
+    select.value = previous;
+  }
+}
+
+function fillSelectedComplaint() {
+  const selectedId = $("complaintSelect").value;
+  clearError();
+
+  if (selectedId === "") {
+    $("category").selectedIndex = 0;
+    $("loss").value = "0";
+    $("description").value = "";
+    return;
+  }
+
+  const complaint = complaintsCache.find((item, index) =>
+    String(field(item, "id", "complaintId") !== ""
+      ? field(item, "id", "complaintId")
+      : index) === selectedId
+  );
+
+  if (!complaint) {
+    showError("The selected complaint could not be found. Refresh and try again.");
+    return;
+  }
+
+  const categoryValue = String(
+    field(complaint, "category", "incidentType", "crimeType") || "Other"
+  );
+
+  const matchingCategory = [...$("category").options].find(option =>
+    option.value.toLowerCase() === categoryValue.toLowerCase()
+  );
+
+  $("category").value = matchingCategory ? matchingCategory.value : "Other";
+
+  $("loss").value = Math.max(
+    0,
+    Number(field(complaint, "lossAmount", "loss", "amountLost", "financialLoss")) || 0
+  );
+
+  $("description").value = String(
+    field(complaint, "description", "details", "incidentDescription") || ""
+  );
+
+  $("assessmentResult").hidden = true;
+  $("emptyResult").hidden = false;
+}
+
+function textOf(record) {
+  if (!record || typeof record !== "object") return String(record || "");
+
+  return Object.values(record)
+    .filter(value => value !== null && value !== undefined)
+    .map(value => typeof value === "object" ? JSON.stringify(value) : String(value))
+    .join(" ")
+    .toLowerCase();
+}
+
+function getStoredRecords(type) {
+  const keyGroups = {
+    evidence: ["cyberShieldEvidence", "evidence", "evidences"],
+    investigations: ["cyberShieldInvestigations", "investigations"],
+    history: ["cyberShieldHistoricalComplaints", "historicalComplaints", "history"]
+  };
+
+  const records = [];
+  const keys = keyGroups[type] || [];
+
+  for (const key of keys) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+
+      const parsed = JSON.parse(raw);
+
+      if (Array.isArray(parsed)) {
+        records.push(...parsed);
+      } else if (parsed && typeof parsed === "object") {
+        let foundArray = false;
+
+        for (const property of ["content", "data", "records", "items"]) {
+          if (Array.isArray(parsed[property])) {
+            records.push(...parsed[property]);
+            foundArray = true;
+          }
+        }
+
+        if (!foundArray) records.push(parsed);
+      }
+    } catch (error) {
+      console.warn("Unable to read local storage key:", key, error);
+    }
+  }
+
+  return records;
+}
+
+function relatedRecords(records, description, category, complaint) {
+  const incidentText = (description + " " + category).toLowerCase();
+  const complaintId = String(field(complaint, "id", "complaintId") || "");
+
+  return records.filter(record => {
+    const linkedId = String(
+      field(record, "complaintId", "complaint_id", "complaintReference") || ""
+    );
+
+    if (complaintId && linkedId && complaintId === linkedId) return true;
+
+    const recordText = textOf(record);
+    const terms = incidentText
+      .split(/[^a-z0-9]+/)
+      .filter(word => word.length >= 5);
+
+    return terms.some(term => recordText.includes(term));
+  });
+}
+
+function analyzeIncident(description, category, loss, complaint) {
+  let score = 0;
+  const reasons = [];
+  const recommendations = [];
+  const text = (description + " " + category).toLowerCase();
+
+  const severeTerms = [
+    "unauthorized transaction",
+    "account takeover",
+    "ransomware",
+    "extortion",
+    "blackmail",
+    "identity theft",
+    "malware",
+    "investment scam",
+    "crypto scam",
+    "bank account hacked"
+  ];
+
+  const riskTerms = [
+    "phishing",
+    "upi",
+    "bank",
+    "fraud",
+    "scam",
+    "password",
+    "fake profile",
+    "harassment",
+    "impersonation",
+    "suspicious link",
+    "data leak",
+    "credit card",
+    "debit card",
+    "hacked"
+  ];
+
+  const severeMatches = severeTerms.filter(term => text.includes(term));
+  const riskMatches = riskTerms.filter(term => text.includes(term));
+
+  if (severeMatches.length) {
+    score += Math.min(severeMatches.length * 2, 5);
+    reasons.push("Serious risk indicators detected: " + severeMatches.join(", ") + ".");
+  }
+
+  if (riskMatches.length) {
+    score += Math.min(riskMatches.length, 3);
+    reasons.push("Additional incident indicators detected: " + riskMatches.join(", ") + ".");
+  }
+
+  if (loss >= 100000) {
+    score += 4;
+    reasons.push("Reported financial loss is ₹1,00,000 or more.");
+  } else if (loss >= 10000) {
+    score += 3;
+    reasons.push("Reported financial loss is ₹10,000 or more.");
+  } else if (loss > 0) {
+    score += 1;
+    reasons.push("Financial loss has been reported.");
+  } else {
+    reasons.push("No financial loss amount was reported.");
+  }
+
+  const evidence = relatedRecords(
+    getStoredRecords("evidence"), description, category, complaint
+  );
+
+  const investigations = relatedRecords(
+    getStoredRecords("investigations"), description, category, complaint
+  );
+
+  const history = relatedRecords(
+    getStoredRecords("history"), description, category, complaint
+  );
+
+  if (evidence.length) {
+    score += 2;
+    reasons.push(
+      evidence.length +
+      " potentially related evidence record(s) were found. These require verification."
+    );
+  } else {
+    reasons.push("No matching evidence records were found in browser storage.");
+  }
+
+  if (investigations.length) {
+    const urgent = investigations.some(record =>
+      /critical|high|urgent|escalat/i.test(textOf(record))
+    );
+
+    score += urgent ? 3 : 1;
+    reasons.push(
+      investigations.length +
+      " potentially related investigation record(s) were found."
+    );
+
+    if (urgent) {
+      reasons.push("A related investigation contains a high-priority or urgent indicator.");
+    }
+  } else {
+    reasons.push("No matching investigation records were found in browser storage.");
+  }
+
+  if (history.length) {
+    const previousHigh = history.some(record =>
+      /high|critical|severe/i.test(String(
+        field(record, "severity", "priority", "riskLevel") || ""
+      ).toLowerCase())
+    );
+
+    score += previousHigh ? 2 : 1;
+    reasons.push(
+      history.length +
+      " potentially related historical complaint(s) were found."
+    );
+
+    if (previousHigh) {
+      reasons.push("A related historical complaint has a high or critical classification.");
+    }
+  } else {
+    reasons.push("No matching historical complaints were found in browser storage.");
+  }
+
+  // Crime type contributes to the risk score as well as description and loss.
+  const categoryRisk = {
+    "Online Fraud": 1,
+    "UPI / Banking Fraud": 1,
+    "Phishing": 1,
+    "Identity Theft": 2,
+    "Cyber Harassment": 1,
+    "Account Hacking": 2,
+    "Ransomware / Malware": 2,
+    "Investment / Crypto Scam": 1,
+    "Other": 0
+  };
+
+  score += categoryRisk[category] || 0;
+  reasons.push("The incident category was included in the combined risk assessment.");
+
+  let level = "Low";
+  if (score >= 8) {
+    level = "High";
+  } else if (score >= 4) {
+    level = "Medium";
+  }
+
+  if (loss > 0 && /upi|bank|credit card|debit card|unauthorized transaction/.test(text)) {
+    recommendations.push(
+      "Contact your bank or payment provider promptly about unauthorized transactions."
+    );
+  }
+
+  if (/password|account takeover|hacked/.test(text)) {
+    recommendations.push(
+      "Secure affected accounts, change passwords from a trusted device, and enable multifactor authentication."
+    );
+  }
+
+  if (/phishing|suspicious link/.test(text)) {
+    recommendations.push(
+      "Avoid suspicious links and preserve the original message, sender details and URL."
+    );
+  }
+
+  recommendations.push(
+    "Preserve screenshots, transaction references, original files and timestamps."
+  );
+
+  recommendations.push(
+    "Ask an investigator to verify related evidence and historical matches before finalizing the risk level."
+  );
+
+  return {
+    level,
+    score,
+    reasons,
+    recommendations,
+    evidence,
+    investigations,
+    history
+  };
+}
+
+function runAssessment(event) {
+  event.preventDefault();
+  clearError();
+
+  const selectedId = $("complaintSelect").value;
+
+  if (selectedId === "") {
+    showError("Select an existing complaint before running the assessment.");
+    $("complaintSelect").focus();
+    return;
+  }
+
+  const complaint = complaintsCache.find((item, index) =>
+    String(field(item, "id", "complaintId") !== ""
+      ? field(item, "id", "complaintId")
+      : index) === selectedId
+  );
+
+  if (!complaint) {
+    showError("The selected complaint could not be found. Refresh and try again.");
+    return;
+  }
+
+  // Use the selected complaint's saved details for the assessment.
+  const description = String(
+    field(complaint, "description", "details", "incidentDescription") ||
+    $("description").value
+  ).trim();
+
+  const category = $("category").value;
+  const loss = Number($("loss").value || 0);
+
+  if (description.length < 10) {
+    showError("The selected complaint needs an incident description of at least 10 characters.");
+    return;
+  }
+
+  if (!Number.isFinite(loss) || loss < 0) {
+    showError("The selected complaint has an invalid financial-loss amount.");
+    return;
+  }
+
+  $("assessBtn").disabled = true;
+  $("assessBtn").textContent = "Analyzing...";
+
+  try {
+    const result = analyzeIncident(description, category, loss, complaint);
+
+    $("emptyResult").hidden = true;
+    $("assessmentResult").hidden = false;
+
+    $("levelText").textContent = result.level + " Priority";
+
+    const badge = $("levelBadge");
+    badge.textContent = result.level;
+    badge.className = "badge " + result.level.toLowerCase();
+
+    $("meterFill").style.width = Math.min(100, result.score * 10) + "%";
+
+    $("summary").textContent =
+      "Preliminary risk score: " + result.score +
+      ". This is a rule-based screening assessment, not a verified finding.";
+
+    addList("reasons", result.reasons);
+    addList("recommendations", result.recommendations);
+
+    $("evidenceCount").textContent = result.evidence.length;
+    $("investigationCount").textContent = result.investigations.length;
+    $("historyCount").textContent = result.history.length;
+
+    $("dataStatus").textContent =
+      "Related evidence, investigation and historical records are matched from browser storage. " +
+      "A match does not prove that a record is authentic or relevant.";
+
+    $("assessedComplaint").textContent =
+      "Complaint reference: " +
+      field(complaint, "id", "complaintId") +
+      ". This assessment does not modify the saved complaint.";
+
+  } catch (error) {
+    console.error("Assessment failed:", error);
+    showError("Assessment failed. Open browser Developer Tools (F12) and check Console.");
+  } finally {
+    $("assessBtn").disabled = false;
+    $("assessBtn").textContent = "🔍 Assess Complaint";
+  }
+}
+
+function clearForm() {
+  $("complaintSelect").value = "";
+  $("category").selectedIndex = 0;
+  $("loss").value = "0";
+  $("description").value = "";
+
+  $("assessmentResult").hidden = true;
+  $("emptyResult").hidden = false;
+  $("meterFill").style.width = "0%";
+
+  clearError();
+}
+
+$("complaintSelect").addEventListener("change", fillSelectedComplaint);
+$("assessmentForm").addEventListener("submit", runAssessment);
+$("clearBtn").addEventListener("click", clearForm);
+
+fetchComplaintsFromApi();
+</script>
+</body>
+</html>

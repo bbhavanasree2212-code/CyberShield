@@ -1,0 +1,888 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield | Dashboard</title>
+
+    <style>
+        :root {
+            --navy: #142542;
+            --navy-light: #294267;
+            --blue: #1677c8;
+            --background: #f3f7fc;
+            --text: #1b2a41;
+            --muted: #647894;
+            --border: #dce6f2;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 270px;
+            flex-shrink: 0;
+            background: var(--navy);
+            color: white;
+            padding: 24px 18px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 25px;
+            font-weight: bold;
+            margin: 12px 8px 44px;
+        }
+
+        .shield {
+            font-size: 34px;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            color: #a9bfdc;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 26px 12px 12px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 15px 14px;
+            margin: 5px 0;
+            border-radius: 10px;
+            color: #edf5ff;
+            transition: background 0.2s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: var(--navy-light);
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 36px 40px;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .top h1 {
+            font-size: 32px;
+            margin: 0 0 10px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .portal {
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 30px;
+            padding: 12px 17px;
+            white-space: nowrap;
+        }
+
+        .notice {
+            background: #eef6ff;
+            border: 1px solid #bfdcff;
+            color: #174b8f;
+            padding: 15px 18px;
+            border-radius: 12px;
+            margin: 22px 0;
+            line-height: 1.5;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin: 24px 0;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 16px #1d35570a;
+            min-width: 0;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .muted {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.9fr);
+            gap: 24px;
+        }
+
+        .card h2 {
+            font-size: 22px;
+            margin: 0 0 8px;
+        }
+
+        .field {
+            margin: 18px 0;
+        }
+
+        .field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .field input,
+        .field select,
+        .field textarea {
+            width: 100%;
+            border: 1px solid #cbd8e8;
+            border-radius: 9px;
+            background: white;
+            padding: 13px 14px;
+            font: inherit;
+            color: var(--text);
+            outline: none;
+        }
+
+        .field textarea {
+            min-height: 145px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px #1677c81c;
+        }
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border: 0;
+            border-radius: 9px;
+            background: var(--blue);
+            color: white;
+            padding: 12px 17px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            filter: brightness(0.93);
+        }
+
+        .btn-secondary {
+            background: #eaf2fb;
+            color: #23466d;
+            border: 1px solid #d4e2f2;
+        }
+
+        .message {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 9px;
+            margin: 14px 0;
+            line-height: 1.5;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #eaf8f0;
+            color: #166534;
+            border: 1px solid #b7e4c7;
+        }
+
+        .message.error {
+            background: #fff0ef;
+            color: #9b1c16;
+            border: 1px solid #f2c3bf;
+        }
+
+        .result-box {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 18px;
+            background: #f9fbfe;
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 30px;
+            padding: 5px 9px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #eef2f7;
+            color: #46566b;
+        }
+
+        .badge.low {
+            background: #e6f6ec;
+            color: #18794e;
+        }
+
+        .badge.medium {
+            background: #fff4d6;
+            color: #8a5b00;
+        }
+
+        .badge.high {
+            background: #ffebe9;
+            color: #b42318;
+        }
+
+        .recent-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e9eff6;
+        }
+
+        .recent-item:last-child {
+            border-bottom: 0;
+        }
+
+        .footer-note {
+            margin-top: 22px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                padding: 28px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .app {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .brand {
+                margin: 5px 8px 18px;
+            }
+
+            .nav {
+                display: flex;
+                overflow-x: auto;
+                gap: 5px;
+            }
+
+            .nav a {
+                white-space: nowrap;
+                padding: 11px;
+            }
+
+            .nav-label {
+                display: none;
+            }
+
+            .main {
+                padding: 22px 15px;
+            }
+
+            .top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app">
+
+    <!-- Sidebar navigation -->
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="shield">🛡️</span>
+            <span>CyberShield</span>
+        </div>
+
+        <div class="nav-label">WORKSPACE</div>
+
+        <nav class="nav">
+            <a href="/index.html" data-page="dashboard" class="active">
+                <span class="nav-icon">▦</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/complaint-new.html" data-page="file">
+                <span class="nav-icon">✚</span>
+                <span>File a Complaint</span>
+            </a>
+
+            <a href="/complaints.html" data-page="mine">
+                <span class="nav-icon">▤</span>
+                <span>My Complaints</span>
+            </a>
+        </nav>
+
+        <div class="nav-label">INFORMATION</div>
+
+        <nav class="nav">
+            <a href="/ai-analysis.html" data-page="ai">
+                <span class="nav-icon">✧</span>
+                <span>AI Assessment</span>
+            </a>
+
+            <a href="/investigations.html">
+                <span class="nav-icon">🔎</span>
+                <span>Investigations</span>
+            </a>
+
+            <a href="/evidence.html">
+                <span class="nav-icon">📁</span>
+                <span>Evidence</span>
+            </a>
+
+            <a href="/reports.html">
+                <span class="nav-icon">📊</span>
+                <span>Reports</span>
+            </a>
+
+            <a href="/historical.html">
+                <span class="nav-icon">◷</span>
+                <span>Historical Complaints</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main dashboard -->
+    <main class="main">
+
+        <header class="top">
+            <div>
+                <h1>Dashboard</h1>
+                <p class="subtitle">
+                    Monitor complaints, review AI recommendations,
+                    and track cybercrime cases.
+                </p>
+            </div>
+
+            <div class="portal">🛡️ Cybercrime Portal</div>
+        </header>
+
+        <div class="notice">
+            <strong>Important:</strong>
+            AI recommendations are preliminary decision-support information.
+            Investigators must verify findings before taking action.
+        </div>
+
+        <!-- Dashboard statistics -->
+        <section class="stats">
+            <div class="card">
+                <div class="stat-label">Total Complaints</div>
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="muted">Complaints recorded in this browser</div>
+            </div>
+
+            <div class="card">
+                <div class="stat-label">Pending Complaints</div>
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="muted">Awaiting further action</div>
+            </div>
+
+            <div class="card">
+                <div class="stat-label">High-Priority Cases</div>
+                <div class="stat-value" id="highCount">0</div>
+                <div class="muted">Preliminary high assessments</div>
+            </div>
+
+            <div class="card">
+                <div class="stat-label">Reported Financial Loss</div>
+                <div class="stat-value" id="lossTotal">₹0</div>
+                <div class="muted">Sum of recorded loss amounts</div>
+            </div>
+        </section>
+
+        <div class="content-grid">
+
+            <!-- Quick complaint registration -->
+            <section class="card">
+                <h2>Register a Complaint</h2>
+                <p class="muted">
+                    Provide an incident description and reported loss.
+                </p>
+
+                <form id="quickForm">
+                    <div class="field">
+                        <label for="quickDescription">
+                            Incident Description *
+                        </label>
+                        <textarea
+                            id="quickDescription"
+                            required
+                            minlength="10"
+                            placeholder="Describe what happened, including relevant dates, transaction references, phone numbers, URLs, or other details."
+                        ></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label for="quickLoss">
+                            Reported Financial Loss (₹)
+                        </label>
+                        <input
+                            id="quickLoss"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value="0"
+                            required
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label for="quickCategory">Incident Type</label>
+                        <select id="quickCategory">
+                            <option>Online Fraud</option>
+                            <option>UPI / Banking Fraud</option>
+                            <option>Phishing</option>
+                            <option>Identity Theft</option>
+                            <option>Cyber Harassment</option>
+                            <option>Account Hacking</option>
+                            <option>Ransomware / Malware</option>
+                            <option>Investment / Crypto Scam</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div id="quickMessage" class="message"></div>
+
+                    <button class="btn" type="submit">
+                        Submit Complaint
+                    </button>
+
+                    <a class="btn btn-secondary" href="/complaint-new.html">
+                        Full Complaint Form
+                    </a>
+                </form>
+            </section>
+
+            <!-- Assessment and recent cases -->
+            <section class="card">
+                <h2>AI Assessment</h2>
+                <p class="muted">
+                    Preliminary Low, Medium, or High decision support.
+                </p>
+
+                <div class="result-box">
+                    <h3>Classification</h3>
+                    <p class="muted">
+                        Review the incident description and reported loss
+                        to obtain a preliminary priority level.
+                    </p>
+                    <a class="btn" href="/ai-analysis.html">
+                        Assess an Incident
+                    </a>
+                </div>
+
+                <div class="result-box">
+                    <h3>Recent Complaints</h3>
+                    <div id="recentList" class="muted">
+                        No complaints recorded yet.
+                    </div>
+
+                    <p style="margin-top:15px">
+                        <a class="btn btn-secondary" href="/complaints.html">
+                            Search My Complaints
+                        </a>
+                    </p>
+                </div>
+
+                <p class="footer-note">
+                    This page uses browser storage for its demonstration
+                    records. It does not replace secure server-side storage.
+                </p>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<script>
+    const STORAGE_KEY = "cyberShieldComplaints";
+
+    // Read complaint records safely.
+    function readComplaints() {
+        try {
+            const value = JSON.parse(
+                localStorage.getItem(STORAGE_KEY) || "[]"
+            );
+
+            return Array.isArray(value) ? value : [];
+        } catch (error) {
+            console.error("Unable to read complaints:", error);
+            return [];
+        }
+    }
+
+    // Save complaint records in this browser.
+    function writeComplaints(items) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    // Escape text before adding it to HTML.
+    function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+    }
+
+    function money(value) {
+        return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+            maximumFractionDigits: 2
+        }).format(Number(value) || 0);
+    }
+
+    function severityClass(level) {
+        const value = String(level || "").toLowerCase();
+
+        if (value === "high") return "high";
+        if (value === "medium") return "medium";
+
+        return "low";
+    }
+
+    function newComplaintId() {
+        return "CS-" + Date.now().toString().slice(-8);
+    }
+
+    /*
+     * Demonstration rule-based assessment.
+     * This is not a trained AI model.
+     */
+    function severityAssessment(description, loss, category) {
+        const text = (
+            description + " " + (category || "")
+        ).toLowerCase();
+
+        const reasons = [];
+        let score = 0;
+
+        const highTerms = [
+            "otp",
+            "bank account",
+            "account takeover",
+            "identity theft",
+            "ransomware",
+            "blackmail",
+            "extortion",
+            "unauthorized transaction",
+            "phishing",
+            "upi",
+            "credit card",
+            "debit card",
+            "remote access",
+            "malware",
+            "investment scam",
+            "crypto",
+            "cryptocurrency"
+        ];
+
+        const mediumTerms = [
+            "password",
+            "email",
+            "social media",
+            "fake profile",
+            "online shopping",
+            "impersonation",
+            "harassment",
+            "suspicious link",
+            "fraud",
+            "scam",
+            "data leak"
+        ];
+
+        const foundHigh = highTerms.filter(term => text.includes(term));
+        const foundMedium = mediumTerms.filter(term => text.includes(term));
+
+        if (foundHigh.length > 0) {
+            score += Math.min(3, foundHigh.length);
+
+            reasons.push(
+                "Potentially serious indicator(s): " +
+                foundHigh.slice(0, 5).join(", ") + "."
+            );
+        }
+
+        if (foundMedium.length > 0) {
+            score += Math.min(2, foundMedium.length);
+
+            reasons.push(
+                "Additional concern(s): " +
+                foundMedium.slice(0, 5).join(", ") + "."
+            );
+        }
+
+        const amount = Number(loss) || 0;
+
+        if (amount >= 100000) {
+            score += 3;
+            reasons.push("Reported financial loss is ₹1,00,000 or more.");
+        } else if (amount >= 10000) {
+            score += 2;
+            reasons.push("Reported financial loss is ₹10,000 or more.");
+        } else if (amount > 0) {
+            score += 1;
+            reasons.push("A financial loss has been reported.");
+        }
+
+        let level;
+
+        if (score >= 4) {
+            level = "High";
+        } else if (score >= 2) {
+            level = "Medium";
+        } else {
+            level = "Low";
+        }
+
+        if (reasons.length === 0) {
+            reasons.push(
+                "No listed high-risk indicators or financial loss " +
+                "were detected in the supplied details."
+            );
+        }
+
+        reasons.push(
+            "This is a preliminary rule-based result. " +
+            "An investigator must verify the details and evidence."
+        );
+
+        return {
+            level: level,
+            score: score,
+            reasons: reasons
+        };
+    }
+
+    // Update the statistics and recent complaint list.
+    function renderDashboard() {
+        const items = readComplaints();
+
+        document.getElementById("totalCount").textContent = items.length;
+
+        document.getElementById("pendingCount").textContent =
+            items.filter(item =>
+                (item.status || "Pending") === "Pending"
+            ).length;
+
+        document.getElementById("highCount").textContent =
+            items.filter(item =>
+                String(item.severity || "").toLowerCase() === "high"
+            ).length;
+
+        const totalLoss = items.reduce(
+            (sum, item) => sum + (Number(item.loss) || 0),
+            0
+        );
+
+        document.getElementById("lossTotal").textContent =
+            money(totalLoss);
+
+        const recent = items.slice().reverse().slice(0, 5);
+
+        document.getElementById("recentList").innerHTML =
+            recent.length > 0
+                ? recent.map(item => `
+                    <div class="recent-item">
+                        <strong>${escapeHtml(item.id)}</strong>
+                        · ${escapeHtml(item.category || "Other")}
+                        <span class="badge ${severityClass(item.severity)}">
+                            ${escapeHtml(item.severity || "Low")}
+                        </span>
+                        <div>
+                            ${escapeHtml(
+                                (item.description || "").slice(0, 100)
+                            )}
+                        </div>
+                    </div>
+                `).join("")
+                : "No complaints recorded yet.";
+    }
+
+    // Handle quick complaint submission.
+    document.getElementById("quickForm").addEventListener(
+        "submit",
+        function (event) {
+            event.preventDefault();
+
+            const description = document
+                .getElementById("quickDescription")
+                .value.trim();
+
+            const loss = Number(
+                document.getElementById("quickLoss").value
+            ) || 0;
+
+            const category =
+                document.getElementById("quickCategory").value;
+
+            if (description.length < 10) {
+                showMessage(
+                    "Please enter at least 10 characters describing the incident.",
+                    "error"
+                );
+                return;
+            }
+
+            if (loss < 0) {
+                showMessage(
+                    "Financial loss cannot be negative.",
+                    "error"
+                );
+                return;
+            }
+
+            const assessment = severityAssessment(
+                description,
+                loss,
+                category
+            );
+
+            const complaint = {
+                id: newComplaintId(),
+                description: description,
+                loss: loss,
+                category: category,
+                severity: assessment.level,
+                reasons: assessment.reasons,
+                status: "Pending",
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                const items = readComplaints();
+
+                items.push(complaint);
+                writeComplaints(items);
+
+                showMessage(
+                    "Complaint " + complaint.id +
+                    " saved successfully. Preliminary priority: " +
+                    complaint.severity + ".",
+                    "success"
+                );
+
+                document.getElementById("quickForm").reset();
+                document.getElementById("quickLoss").value = "0";
+
+                renderDashboard();
+            } catch (error) {
+                console.error("Unable to save complaint:", error);
+
+                showMessage(
+                    "Could not save the complaint in browser storage.",
+                    "error"
+                );
+            }
+        }
+    );
+
+    function showMessage(text, type) {
+        const element = document.getElementById("quickMessage");
+
+        element.textContent = text;
+        element.className = "message show " + type;
+    }
+
+    // Mark the dashboard link as active.
+    document.querySelectorAll(".nav a").forEach(link => {
+        link.classList.toggle(
+            "active",
+            link.dataset.page === "dashboard"
+        );
+    });
+
+    renderDashboard();
+</script>
+</body>
+</html>

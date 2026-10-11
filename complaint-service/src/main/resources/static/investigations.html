@@ -1,0 +1,1457 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CyberShield | Investigations</title>
+
+<style>
+* { box-sizing: border-box; }
+
+:root {
+    --navy: #142448;
+    --navy-hover: #20365f;
+    --navy-active: #263d70;
+    --blue: #425be8;
+    --bg: #f4f6fb;
+    --text: #1b2540;
+    --muted: #7b8499;
+    --border: #e5eaf3;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* DASHBOARD-MATCHING NAVY SIDEBAR */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px 18px;
+    background: var(--navy);
+    color: white;
+    z-index: 1000;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    margin-bottom: 34px;
+    color: white;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: var(--navy-active);
+    color: white;
+    font-size: 19px;
+}
+
+.sidebar-section {
+    margin-bottom: 25px;
+}
+
+.sidebar-label {
+    padding: 0 12px;
+    margin-bottom: 10px;
+    color: #aab8d1;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 1.2px;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 43px;
+    padding: 11px 12px;
+    margin: 3px 0;
+    border-radius: 8px;
+    color: #e0e7f4;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav:hover {
+    background: var(--navy-hover);
+    color: white;
+}
+
+.nav.active {
+    background: var(--navy-active);
+    color: white;
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 #91b2ff;
+}
+
+.nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 16px;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 18px 10px 2px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    color: #c5d0e3;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.sidebar-footer strong {
+    display: block;
+    margin-bottom: 3px;
+    color: white;
+    font-size: 12px;
+}
+
+/* MAIN CONTENT */
+.main {
+    margin-left: 250px;
+    min-height: 100vh;
+    padding: 30px 35px 45px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 27px;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 27px;
+    font-weight: 750;
+}
+
+.page-subtitle {
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.back-link {
+    padding: 10px 14px;
+    border: 1px solid #dce2ef;
+    border-radius: 8px;
+    background: white;
+    color: #3447a7;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.back-link:hover { background: #f0f3ff; }
+
+/* PANELS */
+.panel {
+    padding: 24px;
+    margin-bottom: 22px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    box-shadow: 0 5px 20px #192a5209;
+}
+
+.panel h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.muted, .notice {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.notice { margin-top: 12px; }
+
+/* STATS */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 22px 0;
+}
+
+.stat {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fafbff;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.stat strong {
+    display: block;
+    margin-top: 7px;
+    color: var(--text);
+    font-size: 25px;
+}
+
+/* TOOLBAR AND FORMS */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+input, select, textarea, button {
+    padding: 11px 12px;
+    border: 1px solid #dce1ed;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+}
+
+input, select, textarea {
+    background: white;
+    color: var(--text);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px #425be81a;
+}
+
+.toolbar input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.toolbar select { min-width: 155px; }
+
+button {
+    border: 0;
+    background: var(--blue);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+button:hover { filter: brightness(.96); }
+button:disabled { opacity: .6; cursor: wait; }
+
+.secondary {
+    background: #e9edff;
+    color: #263baf;
+}
+
+.create-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.field label {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.field input, .field select { width: 100%; }
+
+.tablewrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #edf0f6;
+    border-radius: 9px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+}
+
+th, td {
+    padding: 13px 11px;
+    border-bottom: 1px solid #edf0f6;
+    text-align: left;
+    vertical-align: top;
+    font-size: 12px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+th {
+    background: #f8f9fd;
+    color: #58637b;
+    font-size: 11px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #fafbff; }
+
+td input, td select, td textarea {
+    width: 100%;
+    min-width: 125px;
+    font-size: 12px;
+}
+
+td textarea {
+    min-height: 70px;
+    resize: vertical;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 20px;
+    background: #eef1fa;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-badge.NOT_STARTED {
+    background: #eef1fa;
+    color: #596681;
+}
+
+.status-badge.IN_PROGRESS {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-badge.AWAITING_EVIDENCE,
+.status-badge.UNDER_REVIEW {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.RESOLVED,
+.status-badge.VERIFIED {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.COLLECTED {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.status-badge.REJECTED {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.score {
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.score-high { color: #166534; }
+.score-medium { color: #92400e; }
+.score-low { color: #991b1b; }
+
+.evidence-link {
+    color: #315bea;
+    text-decoration: none;
+}
+
+.evidence-link:hover { text-decoration: underline; }
+
+.empty {
+    padding: 25px 15px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    min-width: 110px;
+}
+
+.actions button {
+    padding: 9px 10px;
+    font-size: 11px;
+}
+
+.match-factors {
+    padding-left: 18px;
+    margin: 8px 0;
+}
+
+.match-factors li { margin-bottom: 5px; }
+
+.disclaimer {
+    margin-top: 15px;
+    padding: 13px;
+    border-radius: 8px;
+    background: #fff8e8;
+    color: #78561b;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+[hidden] { display: none !important; }
+
+/* RESPONSIVE SIDEBAR AND CONTENT */
+@media (max-width: 1100px) {
+    .sidebar {
+        width: 220px;
+        padding: 22px 12px;
+    }
+
+    .main {
+        margin-left: 220px;
+        padding: 24px 18px 35px;
+    }
+
+    .brand { font-size: 18px; }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        width: 185px;
+        padding: 18px 9px;
+    }
+
+    .brand {
+        gap: 7px;
+        padding: 0 5px;
+        margin-bottom: 24px;
+        font-size: 16px;
+    }
+
+    .logo {
+        width: 30px;
+        height: 30px;
+        font-size: 17px;
+    }
+
+    .nav {
+        gap: 7px;
+        padding: 11px 7px;
+        font-size: 11px;
+    }
+
+    .sidebar-label {
+        padding: 0 7px;
+        font-size: 9px;
+    }
+
+    .main {
+        margin-left: 185px;
+        padding: 18px 12px 28px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .page-title { font-size: 22px; }
+
+    .panel { padding: 15px 11px; }
+
+    .create-grid { grid-template-columns: 1fr; }
+
+    .toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .toolbar input,
+    .toolbar select,
+    .toolbar button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .stats { gap: 9px; }
+
+    .stat {
+        padding: 12px 9px;
+        font-size: 11px;
+    }
+
+    .stat strong { font-size: 21px; }
+}
+
+@media (max-width: 420px) {
+    .sidebar {
+        width: 145px;
+        padding: 15px 6px;
+    }
+
+    .brand {
+        gap: 5px;
+        padding: 0 3px;
+        font-size: 13px;
+    }
+
+    .nav {
+        gap: 5px;
+        padding: 10px 5px;
+        font-size: 10px;
+    }
+
+    .nav-icon { width: 17px; }
+
+    .main {
+        margin-left: 145px;
+        padding: 15px 8px;
+    }
+
+    .page-title { font-size: 19px; }
+    .stats { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- DASHBOARD-STYLE SIDEBAR -->
+<aside class="sidebar">
+    <a class="brand" href="/">
+        <span class="logo">🛡</span>
+        <span>CyberShield</span>
+    </a>
+
+    <nav aria-label="Main navigation">
+        <div class="sidebar-section">
+            <div class="sidebar-label">WORKSPACE</div>
+
+            <a class="nav" href="/">
+                <span class="nav-icon">▦</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a class="nav" href="/complaint-new.html">
+                <span class="nav-icon">✚</span>
+                <span>File a Complaint</span>
+            </a>
+
+            <a class="nav" href="/complaints.html">
+                <span class="nav-icon">▤</span>
+                <span>My Complaints</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-label">INFORMATION</div>
+
+            <a class="nav" href="/ai-analysis.html">
+                <span class="nav-icon">✧</span>
+                <span>AI Assessment</span>
+            </a>
+
+            <a class="nav active"
+               href="/investigations.html"
+               aria-current="page">
+                <span class="nav-icon">🔎</span>
+                <span>Investigations</span>
+            </a>
+
+            <a class="nav" href="/evidence.html">
+                <span class="nav-icon">📁</span>
+                <span>Evidence</span>
+            </a>
+
+            <a class="nav" href="/reports.html">
+                <span class="nav-icon">📊</span>
+                <span>Reports</span>
+            </a>
+
+            <a class="nav" href="/historical.html">
+                <span class="nav-icon">◷</span>
+                <span>Historical Complaints</span>
+            </a>
+
+            <a class="nav" href="/alerts.html">
+                <span class="nav-icon">🚨</span>
+                <span>Alerts &amp; Escalation</span>
+            </a>
+
+            <a class="nav" href="#" id="helpLink">
+                <span class="nav-icon">ⓘ</span>
+                <span>Help &amp; Safety</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <strong>Cybercrime Management</strong>
+        Complaint and investigation workspace
+    </div>
+</aside>
+
+<main class="main">
+
+    <div class="topbar">
+        <div>
+            <h1 class="page-title">Investigation Workspace</h1>
+            <p class="page-subtitle">
+                Manage case assignments, track progress, and review digital evidence.
+            </p>
+        </div>
+
+        <a class="back-link" href="/">← Back to Dashboard</a>
+    </div>
+
+    <section class="panel">
+        <h2>Investigation Overview</h2>
+        <p class="muted">
+            Manage investigations, assign officers, record progress, and assess
+            the relevance of digital evidence linked to each complaint.
+        </p>
+
+        <div class="stats">
+            <div class="stat">Total investigations
+                <strong id="totalCount">0</strong>
+            </div>
+            <div class="stat">Not started
+                <strong id="notStartedCount">0</strong>
+            </div>
+            <div class="stat">In progress
+                <strong id="inProgressCount">0</strong>
+            </div>
+            <div class="stat">Awaiting evidence
+                <strong id="awaitingCount">0</strong>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input id="search" type="search"
+                placeholder="Search investigation, complaint, officer or notes">
+
+            <select id="statusFilter" aria-label="Filter by status">
+                <option value="">All statuses</option>
+                <option value="NOT_STARTED">Not started</option>
+                <option value="IN_PROGRESS">In progress</option>
+                <option value="AWAITING_EVIDENCE">Awaiting evidence</option>
+                <option value="RESOLVED">Resolved</option>
+            </select>
+
+            <button id="refresh" type="button">Refresh</button>
+        </div>
+
+        <p id="statusMessage" class="notice" role="status" aria-live="polite">
+            Loading investigations...
+        </p>
+
+        <div class="tablewrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Investigation</th>
+                        <th>Complaint</th>
+                        <th>Status</th>
+                        <th>Assigned Officer</th>
+                        <th>Investigation Notes</th>
+                        <th>Next Action</th>
+                        <th>Last Updated</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel" id="relatedEvidencePanel">
+        <h2>Automatic Evidence Relevance Assessment</h2>
+        <p class="muted">
+            Evidence is retrieved by complaint ID and ranked using available
+            complaint and evidence text and identifiers. Scores are preliminary
+            matching indicators, not probabilities of authenticity.
+        </p>
+
+        <p id="evidenceMessage" class="notice" role="status" aria-live="polite">
+            Select View Evidence on an investigation to start the assessment.
+        </p>
+
+        <div class="tablewrap">
+            <table style="min-width:1450px">
+                <thead>
+                    <tr>
+                        <th>Evidence ID</th>
+                        <th>Complaint ID</th>
+                        <th>Evidence Name</th>
+                        <th>Type</th>
+                        <th>Reference Number</th>
+                        <th>Source URL</th>
+                        <th>Email Information</th>
+                        <th>Document Reference</th>
+                        <th>Evidence Description</th>
+                        <th>Relevance Assessment</th>
+                        <th>Evidence Status</th>
+                    </tr>
+                </thead>
+                <tbody id="evidenceRows">
+                    <tr>
+                        <td colspan="11" class="empty">
+                            Select an investigation to assess its evidence.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Important:</strong> Relevance scores are generated using
+            simple text and identifier matching in this page. They do not
+            establish authenticity, prove a crime, or replace investigator review.
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Start an Investigation</h2>
+        <p class="muted">
+            Choose an existing complaint. This form does not register or modify complaints.
+        </p>
+
+        <form id="createForm">
+            <div class="create-grid">
+                <div class="field">
+                    <label for="complaintId">Existing Complaint</label>
+                    <select id="complaintId" required>
+                        <option value="">Loading complaints...</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="newOfficer">Assigned Officer (optional)</label>
+                    <input id="newOfficer" maxlength="150"
+                        placeholder="Officer name">
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <button id="createButton" type="submit">
+                    Create Investigation
+                </button>
+            </div>
+        </form>
+
+        <p id="createMessage" class="notice" role="status" aria-live="polite"></p>
+    </section>
+
+</main>
+
+<script>
+const INVESTIGATION_API = "/api/investigations";
+const COMPLAINT_API = "/api/complaints";
+const EVIDENCE_API = "/api/evidence";
+
+const validStatuses = [
+    "NOT_STARTED",
+    "IN_PROGRESS",
+    "AWAITING_EVIDENCE",
+    "RESOLVED"
+];
+
+let investigations = [];
+let complaints = [];
+
+const rows = document.getElementById("rows");
+const statusMessage = document.getElementById("statusMessage");
+const search = document.getElementById("search");
+const statusFilter = document.getElementById("statusFilter");
+const createMessage = document.getElementById("createMessage");
+
+function readableStatus(value) {
+    return String(value || "NOT_STARTED")
+        .toLowerCase()
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, letter => letter.toUpperCase());
+}
+
+function addCell(row, value) {
+    const cell = document.createElement("td");
+    cell.textContent =
+        value == null || value === "" ? "—" : String(value);
+    row.appendChild(cell);
+    return cell;
+}
+
+function addInputCell(row, value, field, multiline = false) {
+    const cell = document.createElement("td");
+    const input = document.createElement(multiline ? "textarea" : "input");
+
+    input.value = value || "";
+    input.dataset.field = field;
+    input.setAttribute("aria-label", field);
+
+    if (!multiline) {
+        input.maxLength = field === "assignedOfficer" ? 150 : 1000;
+    }
+
+    cell.appendChild(input);
+    row.appendChild(cell);
+}
+
+function addStatusCell(row, currentStatus) {
+    const cell = document.createElement("td");
+    const select = document.createElement("select");
+
+    select.dataset.field = "status";
+    select.setAttribute("aria-label", "Investigation status");
+
+    validStatuses.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = readableStatus(value);
+        select.appendChild(option);
+    });
+
+    select.value = currentStatus || "NOT_STARTED";
+    cell.appendChild(select);
+    row.appendChild(cell);
+}
+
+function render() {
+    const query = search.value.trim().toLowerCase();
+    const filter = statusFilter.value;
+
+    const filtered = investigations.filter(item => {
+        const matchesStatus = !filter || item.status === filter;
+
+        const complaint = complaints.find(
+            c => String(c.id) === String(item.complaintId)
+        );
+
+        const searchable = [
+            item.id,
+            item.complaintId,
+            item.status,
+            item.assignedOfficer,
+            item.notes,
+            item.nextAction,
+            complaint?.description,
+            complaint?.category
+        ].map(value => String(value ?? "").toLowerCase()).join(" ");
+
+        return matchesStatus && searchable.includes(query);
+    });
+
+    document.getElementById("totalCount").textContent = investigations.length;
+
+    document.getElementById("notStartedCount").textContent =
+        investigations.filter(i => i.status === "NOT_STARTED").length;
+
+    document.getElementById("inProgressCount").textContent =
+        investigations.filter(i => i.status === "IN_PROGRESS").length;
+
+    document.getElementById("awaitingCount").textContent =
+        investigations.filter(i => i.status === "AWAITING_EVIDENCE").length;
+
+    rows.replaceChildren();
+
+    if (!filtered.length) {
+        const row = document.createElement("tr");
+        const cell = addCell(
+            row,
+            investigations.length
+                ? "No investigations match your search or status filter."
+                : "No investigations yet. Start one using the form below."
+        );
+
+        cell.colSpan = 8;
+        cell.className = "empty";
+        rows.appendChild(row);
+        return;
+    }
+
+    filtered.forEach(item => {
+        const row = document.createElement("tr");
+
+        addCell(row, item.id);
+
+        const complaintCell = document.createElement("td");
+        const complaint = complaints.find(
+            c => String(c.id) === String(item.complaintId)
+        );
+
+        const title = document.createElement("strong");
+        title.textContent = "Complaint #" + item.complaintId;
+        complaintCell.appendChild(title);
+
+        if (complaint) {
+            const description = document.createElement("p");
+            description.className = "muted";
+            description.textContent =
+                String(complaint.description || "").slice(0, 140);
+            complaintCell.appendChild(description);
+
+            const category = document.createElement("p");
+            category.className = "muted";
+            category.textContent = complaint.category || "Uncategorized";
+            complaintCell.appendChild(category);
+        }
+
+        row.appendChild(complaintCell);
+
+        addStatusCell(row, item.status);
+        addInputCell(row, item.assignedOfficer, "assignedOfficer");
+        addInputCell(row, item.notes, "notes", true);
+        addInputCell(row, item.nextAction, "nextAction", true);
+
+        let updatedAt = "—";
+
+        if (item.updatedAt) {
+            const date = new Date(item.updatedAt);
+            updatedAt = Number.isNaN(date.getTime())
+                ? String(item.updatedAt)
+                : date.toLocaleString();
+        }
+
+        addCell(row, updatedAt);
+
+        const actionCell = document.createElement("td");
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const saveButton = document.createElement("button");
+        saveButton.type = "button";
+        saveButton.textContent = "Save";
+
+        saveButton.addEventListener("click", () =>
+            saveInvestigation(item.id, row, saveButton)
+        );
+
+        actions.appendChild(saveButton);
+
+        const evidenceButton = document.createElement("button");
+        evidenceButton.type = "button";
+        evidenceButton.className = "secondary";
+        evidenceButton.textContent = "View Evidence";
+
+        evidenceButton.addEventListener("click", () =>
+            loadRelatedEvidence(item.complaintId, item.id)
+        );
+
+        actions.appendChild(evidenceButton);
+        actionCell.appendChild(actions);
+        row.appendChild(actionCell);
+
+        rows.appendChild(row);
+    });
+}
+
+async function fetchJson(url, options = {}) {
+    const response = await fetch(url, options);
+    const text = await response.text();
+
+    let data = null;
+
+    if (text) {
+        try {
+            data = JSON.parse(text);
+        } catch {
+            throw new Error("The server returned an unexpected response.");
+        }
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ||
+            data?.message ||
+            data?.error ||
+            "HTTP " + response.status
+        );
+    }
+
+    return data;
+}
+
+async function loadAll() {
+    statusMessage.textContent = "Loading investigations and complaints...";
+
+    try {
+        const [investigationData, complaintData] = await Promise.all([
+            fetchJson(INVESTIGATION_API),
+            fetchJson(COMPLAINT_API)
+        ]);
+
+        if (!Array.isArray(investigationData) ||
+            !Array.isArray(complaintData)) {
+            throw new Error("Unexpected data received from the server.");
+        }
+
+        investigations = investigationData;
+        complaints = complaintData;
+
+        populateComplaintOptions();
+        render();
+
+        statusMessage.textContent =
+            "Loaded " + investigations.length + " investigation(s) and " +
+            complaints.length + " existing complaint(s).";
+
+    } catch (error) {
+        statusMessage.textContent =
+            "Unable to load data: " + error.message;
+    }
+}
+
+function populateComplaintOptions() {
+    const select = document.getElementById("complaintId");
+    const previousValue = select.value;
+
+    select.replaceChildren();
+
+    const available = complaints.filter(c =>
+        !investigations.some(
+            i => String(i.complaintId) === String(c.id)
+        )
+    );
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = available.length
+        ? "Select an existing complaint"
+        : "No unassigned complaints available";
+
+    select.appendChild(placeholder);
+
+    available.forEach(complaint => {
+        const option = document.createElement("option");
+        option.value = complaint.id;
+        option.textContent =
+            "Complaint #" + complaint.id + " — " +
+            String(complaint.description || "No description").slice(0, 85);
+
+        select.appendChild(option);
+    });
+
+    if (available.some(c => String(c.id) === previousValue)) {
+        select.value = previousValue;
+    }
+
+    document.getElementById("createButton").disabled =
+        available.length === 0;
+}
+
+async function saveInvestigation(id, row, button) {
+    const body = {};
+
+    row.querySelectorAll("[data-field]").forEach(input => {
+        body[input.dataset.field] = input.value.trim();
+    });
+
+    button.disabled = true;
+    button.textContent = "Saving...";
+
+    try {
+        await fetchJson(INVESTIGATION_API + "/" + id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        statusMessage.textContent =
+            "Investigation #" + id + " updated successfully.";
+
+        await loadAll();
+
+    } catch (error) {
+        statusMessage.textContent =
+            "Unable to save investigation: " + error.message;
+    } finally {
+        button.disabled = false;
+        button.textContent = "Save";
+    }
+}
+
+/* PRELIMINARY TEXT-BASED EVIDENCE MATCHING */
+function normalizeText(value) {
+    return String(value || "")
+        .toLowerCase()
+        .replace(/https?:\/\/\S+/g, " ")
+        .replace(/[^a-z0-9@._-]+/g, " ")
+        .trim();
+}
+
+function getWords(value) {
+    const stopWords = new Set([
+        "the", "and", "for", "with", "from", "this", "that",
+        "was", "were", "has", "have", "had", "into", "about",
+        "complaint", "evidence", "document", "related"
+    ]);
+
+    return normalizeText(value)
+        .split(/\s+/)
+        .filter(word => word.length > 2 && !stopWords.has(word));
+}
+
+function assessEvidence(complaint, evidence) {
+    let score = 0;
+    const factors = [];
+
+    const complaintText = normalizeText([
+        complaint?.description,
+        complaint?.category
+    ].join(" "));
+
+    const evidenceText = normalizeText([
+        evidence?.evidenceName,
+        evidence?.evidenceType,
+        evidence?.description,
+        evidence?.documentReference,
+        evidence?.emailInformation
+    ].join(" "));
+
+    const complaintWords = new Set(getWords(complaintText));
+    const evidenceWords = new Set(getWords(evidenceText));
+
+    const sharedWords = [...evidenceWords].filter(
+        word => complaintWords.has(word)
+    );
+
+    if (sharedWords.length > 0) {
+        score += Math.min(30, sharedWords.length * 10);
+        factors.push(
+            "Shared terms: " + sharedWords.slice(0, 5).join(", ")
+        );
+    }
+
+    const category = normalizeText(complaint?.category);
+    const type = normalizeText(evidence?.evidenceType);
+
+    if (category && type &&
+        (category.includes(type) || type.includes(category))) {
+        score += 15;
+        factors.push("Evidence type matches complaint category");
+    }
+
+    const reference = normalizeText(evidence?.referenceNumber);
+
+    if (reference && reference.length >= 4 &&
+        complaintText.includes(reference)) {
+        score += 30;
+        factors.push("Reference number appears in complaint details");
+    }
+
+    const complaintUrls =
+        String(complaint?.description || "").match(/https?:\/\/[^\s]+/gi) || [];
+
+    if (evidence?.sourceUrl && complaintUrls.length) {
+        try {
+            const evidenceUrl = new URL(evidence.sourceUrl);
+
+            const sameHost = complaintUrls.some(value => {
+                try {
+                    return new URL(value).hostname.toLowerCase() ===
+                        evidenceUrl.hostname.toLowerCase();
+                } catch {
+                    return false;
+                }
+            });
+
+            if (sameHost) {
+                score += 30;
+                factors.push("Source URL hostname matches complaint URL");
+            }
+        } catch {
+            factors.push("Evidence source URL could not be validated");
+        }
+    }
+
+    const emailInfo = normalizeText(evidence?.emailInformation);
+
+    if (emailInfo && emailInfo.length >= 4 &&
+        complaintText.includes(emailInfo)) {
+        score += 20;
+        factors.push("Email information appears in complaint details");
+    }
+
+    score = Math.min(100, score);
+
+    let assessment;
+
+    if (score >= 50) {
+        assessment = "Potentially relevant";
+    } else if (score >= 20) {
+        assessment = "Needs officer review";
+    } else {
+        assessment = "Insufficient match";
+    }
+
+    if (!factors.length) {
+        factors.push(
+            "No strong matching details found; inspect the original evidence"
+        );
+    }
+
+    return { score, assessment, factors };
+}
+
+async function loadRelatedEvidence(complaintId, investigationId) {
+    const message = document.getElementById("evidenceMessage");
+    const evidenceRows = document.getElementById("evidenceRows");
+
+    message.textContent = "Loading and assessing evidence...";
+    evidenceRows.replaceChildren();
+
+    document.getElementById("relatedEvidencePanel")
+        .scrollIntoView({ behavior: "smooth", block: "start" });
+
+    try {
+        const complaint = complaints.find(
+            item => String(item.id) === String(complaintId)
+        );
+
+        if (!complaint) {
+            throw new Error("Complaint details were not found.");
+        }
+
+        const evidence = await fetchJson(
+            EVIDENCE_API + "/complaint/" +
+            encodeURIComponent(complaintId)
+        );
+
+        if (!Array.isArray(evidence) || evidence.length === 0) {
+            const row = document.createElement("tr");
+            const cell = addCell(
+                row,
+                "No evidence is registered for complaint #" + complaintId + "."
+            );
+
+            cell.colSpan = 11;
+            cell.className = "empty";
+            evidenceRows.appendChild(row);
+            message.textContent = "No linked evidence found.";
+            return;
+        }
+
+        const assessments = evidence.map(item => ({
+            item,
+            result: assessEvidence(complaint, item)
+        }));
+
+        assessments.sort((a, b) => b.result.score - a.result.score);
+
+        assessments.forEach(({ item, result }) => {
+            const row = document.createElement("tr");
+
+            addCell(row, item.id);
+            addCell(row, item.complaintId);
+            addCell(row, item.evidenceName);
+            addCell(row, item.evidenceType);
+            addCell(row, item.referenceNumber);
+
+            const urlCell = document.createElement("td");
+
+            if (item.sourceUrl) {
+                try {
+                    const url = new URL(item.sourceUrl);
+
+                    if (url.protocol === "https:" ||
+                        url.protocol === "http:") {
+                        const link = document.createElement("a");
+                        link.href = url.href;
+                        link.target = "_blank";
+                        link.rel = "noopener noreferrer";
+                        link.className = "evidence-link";
+                        link.textContent = "Open source";
+                        urlCell.appendChild(link);
+                    } else {
+                        urlCell.textContent = item.sourceUrl;
+                    }
+                } catch {
+                    urlCell.textContent = item.sourceUrl;
+                }
+            } else {
+                urlCell.textContent = "—";
+            }
+
+            row.appendChild(urlCell);
+
+            addCell(row, item.emailInformation);
+            addCell(row, item.documentReference);
+            addCell(row, item.description);
+
+            const assessmentCell = document.createElement("td");
+            const score = document.createElement("div");
+
+            score.className = "score " +
+                (result.score >= 50
+                    ? "score-high"
+                    : result.score >= 20
+                        ? "score-medium"
+                        : "score-low");
+
+            score.textContent =
+                result.score + "% — " + result.assessment;
+
+            assessmentCell.appendChild(score);
+
+            const details = document.createElement("ul");
+            details.className = "match-factors";
+
+            result.factors.forEach(factor => {
+                const li = document.createElement("li");
+                li.textContent = factor;
+                details.appendChild(li);
+            });
+
+            assessmentCell.appendChild(details);
+
+            const caution = document.createElement("p");
+            caution.className = "muted";
+            caution.textContent =
+                "Preliminary text match only. Officer verification is required.";
+
+            assessmentCell.appendChild(caution);
+            row.appendChild(assessmentCell);
+
+            const statusCell = document.createElement("td");
+            const badge = document.createElement("span");
+            const evidenceStatus = item.status || "COLLECTED";
+
+            badge.className = "status-badge " + evidenceStatus;
+            badge.textContent = readableStatus(evidenceStatus);
+
+            statusCell.appendChild(badge);
+            row.appendChild(statusCell);
+            evidenceRows.appendChild(row);
+        });
+
+        message.textContent =
+            assessments.length + " evidence record(s) linked to complaint #" +
+            complaintId + ", ranked by preliminary matching for investigation #" +
+            investigationId + ".";
+
+    } catch (error) {
+        const row = document.createElement("tr");
+        const cell = addCell(
+            row,
+            "Could not assess evidence: " + error.message
+        );
+
+        cell.colSpan = 11;
+        cell.className = "empty";
+        evidenceRows.appendChild(row);
+
+        message.textContent = "Unable to assess related evidence.";
+    }
+}
+
+document.getElementById("createForm")
+    .addEventListener("submit", async event => {
+        event.preventDefault();
+        createMessage.textContent = "";
+
+        const complaintId =
+            document.getElementById("complaintId").value;
+
+        if (!complaintId) {
+            createMessage.textContent =
+                "Select an existing complaint first.";
+            return;
+        }
+
+        const button = document.getElementById("createButton");
+        button.disabled = true;
+
+        try {
+            const created = await fetchJson(INVESTIGATION_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    complaintId: Number(complaintId)
+                })
+            });
+
+            const officer =
+                document.getElementById("newOfficer").value.trim();
+
+            if (officer) {
+                await fetchJson(INVESTIGATION_API + "/" + created.id, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        assignedOfficer: officer
+                    })
+                });
+            }
+
+            createMessage.textContent =
+                "Investigation #" + created.id +
+                " created for complaint #" + complaintId + ".";
+
+            document.getElementById("newOfficer").value = "";
+            await loadAll();
+
+        } catch (error) {
+            createMessage.textContent =
+                "Unable to create investigation: " + error.message;
+        } finally {
+            button.disabled = false;
+            populateComplaintOptions();
+        }
+    });
+
+document.getElementById("helpLink").addEventListener("click", event => {
+    event.preventDefault();
+    statusMessage.textContent =
+        "For Help & Safety information, contact your Cybercrime Management administrator.";
+});
+
+search.addEventListener("input", render);
+statusFilter.addEventListener("change", render);
+document.getElementById("refresh").addEventListener("click", loadAll);
+
+loadAll();
+</script>
+
+</body>
+</html>

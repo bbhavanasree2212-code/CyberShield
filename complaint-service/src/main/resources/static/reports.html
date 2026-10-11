@@ -1,0 +1,762 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield | Reports</title>
+
+    <style>
+        :root {
+            --navy: #142448;
+            --navy-hover: #20365f;
+            --navy-active: #263d70;
+            --page-bg: #f3f6fb;
+            --primary: #2457a7;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: var(--page-bg);
+            color: var(--text);
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* NAVY BLUE DASHBOARD SIDEBAR */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            padding: 24px 16px 18px;
+            background: var(--navy);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 10px;
+            margin-bottom: 34px;
+            color: var(--white);
+            font-size: 21px;
+            font-weight: 750;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            border-radius: 9px;
+            display: grid;
+            place-items: center;
+            background: var(--navy-active);
+            color: var(--white);
+            font-size: 20px;
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-heading {
+            padding: 0 12px;
+            margin-bottom: 10px;
+            color: #aab8d1;
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: 1.2px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 43px;
+            margin: 3px 0;
+            padding: 11px 12px;
+            border-radius: 8px;
+            color: #e0e7f4;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.15s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--navy-hover);
+            color: var(--white);
+        }
+
+        .nav-link.active {
+            background: var(--navy-active);
+            color: var(--white);
+            font-weight: 700;
+            box-shadow: inset 3px 0 0 #91b2ff;
+        }
+
+        .nav-icon {
+            width: 20px;
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 18px 10px 2px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            color: #c5d0e3;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .sidebar-footer strong {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--white);
+            font-size: 12px;
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            min-height: 100vh;
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            color: #192b4d;
+            font-size: 27px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-header p {
+            margin: 8px 0 0;
+            color: #7c899e;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .card {
+            margin-bottom: 22px;
+            padding: 22px;
+            background: var(--white);
+            border: 1px solid #e5eaf2;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0000000d;
+        }
+
+        .card h2 {
+            margin: 0 0 12px;
+            color: #1d2e4e;
+            font-size: 18px;
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #52617a;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .notice {
+            margin: 0 0 17px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        button {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 7px;
+            padding: 11px 18px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        button:hover {
+            background: #183f80;
+        }
+
+        button:disabled {
+            cursor: wait;
+            opacity: 0.65;
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid #91b2ff;
+            outline-offset: 3px;
+        }
+
+        #status {
+            margin: 12px 0 0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        #status.error {
+            color: #b42332;
+        }
+
+        #status.success {
+            color: #16865b;
+        }
+
+        /* SUMMARY CARDS */
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary .card {
+            min-width: 0;
+            margin-bottom: 0;
+            padding: 20px;
+        }
+
+        .number {
+            margin: 12px 0 4px;
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .summary-note {
+            color: #98a2b3;
+            font-size: 11px;
+        }
+
+        /* CATEGORY TABLE */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+
+        th {
+            background: #f8faff;
+            color: #7e8ba1;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        td {
+            color: #43516b;
+        }
+
+        tbody tr:hover {
+            background: #fafbfe;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .count-badge {
+            display: inline-block;
+            min-width: 34px;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #e9efff;
+            color: #3156c9;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            padding: 28px 15px;
+            color: #8793a8;
+            text-align: center;
+        }
+
+        .table-footer {
+            padding-top: 14px;
+            color: #8591a5;
+            font-size: 11px;
+        }
+
+        /* RESPONSIVE LAYOUT */
+        @media (max-width: 1250px) {
+            .summary {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main {
+                margin-left: 220px;
+                padding: 22px;
+            }
+
+            .summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 650px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 18px 14px;
+            }
+
+            .brand {
+                margin-bottom: 20px;
+            }
+
+            .nav-section {
+                margin-bottom: 13px;
+            }
+
+            .nav-link {
+                min-height: 38px;
+            }
+
+            .sidebar-footer {
+                margin-top: 12px;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px 14px;
+            }
+
+            .page-header h1 {
+                font-size: 23px;
+            }
+
+            .summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .summary .card {
+                padding: 15px;
+            }
+
+            .number {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 17px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- DASHBOARD-STYLE LEFT SIDEBAR -->
+    <aside class="sidebar">
+        <a class="brand" href="/">
+            <span class="brand-icon">🛡</span>
+            <span>CyberShield</span>
+        </a>
+
+        <nav aria-label="Main navigation">
+            <div class="nav-section">
+                <div class="nav-heading">WORKSPACE</div>
+
+                <a class="nav-link" href="/">
+                    <span class="nav-icon">▦</span>
+                    <span>Dashboard</span>
+                </a>
+
+                <a class="nav-link" href="/complaint-new.html">
+                    <span class="nav-icon">✚</span>
+                    <span>File a Complaint</span>
+                </a>
+
+                <a class="nav-link" href="/complaints.html">
+                    <span class="nav-icon">▤</span>
+                    <span>My Complaints</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-heading">INFORMATION</div>
+
+                <a class="nav-link" href="/ai-analysis.html">
+                    <span class="nav-icon">✧</span>
+                    <span>AI Assessment</span>
+                </a>
+
+                <a class="nav-link" href="/investigations.html">
+                    <span class="nav-icon">🔎</span>
+                    <span>Investigations</span>
+                </a>
+
+                <a class="nav-link" href="/evidence.html">
+                    <span class="nav-icon">📁</span>
+                    <span>Evidence</span>
+                </a>
+
+                <a class="nav-link active"
+                   href="/reports.html"
+                   aria-current="page">
+                    <span class="nav-icon">📊</span>
+                    <span>Reports</span>
+                </a>
+
+                <a class="nav-link" href="/historical.html">
+                    <span class="nav-icon">◷</span>
+                    <span>Historical Complaints</span>
+                </a>
+
+                <a class="nav-link" href="/alerts.html">
+                    <span class="nav-icon">🚨</span>
+                    <span>Alerts &amp; Escalation</span>
+                </a>
+
+                <a class="nav-link" href="#" id="helpLink">
+                    <span class="nav-icon">ⓘ</span>
+                    <span>Help &amp; Safety</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <strong>Cybercrime Management</strong>
+            Complaint and investigation workspace
+        </div>
+    </aside>
+
+    <!-- REPORTS CONTENT -->
+    <main class="main">
+
+        <header class="page-header">
+            <div>
+                <h1>CyberShield — Reports</h1>
+                <p>Summary of complaints recorded in the system.</p>
+            </div>
+        </header>
+
+        <section class="card">
+            <h2>Complaint Summary</h2>
+
+            <p class="notice">
+                These figures are calculated from the complaints returned by
+                the existing backend API. No database records are changed.
+            </p>
+
+            <button id="refreshButton" type="button">
+                ↻ Refresh Report
+            </button>
+
+            <p id="status" role="status" aria-live="polite">
+                Loading report...
+            </p>
+        </section>
+
+        <section class="summary" aria-label="Complaint statistics">
+            <article class="card">
+                <h3>Total Complaints</h3>
+                <div class="number" id="totalComplaints">—</div>
+                <div class="summary-note">All recorded complaints</div>
+            </article>
+
+            <article class="card">
+                <h3>High Priority</h3>
+                <div class="number" id="highPriority">—</div>
+                <div class="summary-note">High-priority complaints</div>
+            </article>
+
+            <article class="card">
+                <h3>Medium Priority</h3>
+                <div class="number" id="mediumPriority">—</div>
+                <div class="summary-note">Medium-priority complaints</div>
+            </article>
+
+            <article class="card">
+                <h3>Low Priority</h3>
+                <div class="number" id="lowPriority">—</div>
+                <div class="summary-note">Low-priority complaints</div>
+            </article>
+
+            <article class="card">
+                <h3>Total Reported Loss</h3>
+                <div class="number" id="totalLoss">—</div>
+                <div class="summary-note">Reported financial loss</div>
+            </article>
+        </section>
+
+        <section class="card">
+            <h2>Complaints by Category</h2>
+
+            <p class="notice">
+                Breakdown of recorded complaints by category.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Number of Complaints</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="categoryRows">
+                        <tr>
+                            <td colspan="2">
+                                <div class="empty-state">
+                                    Loading report...
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-footer" id="categorySummary">
+                Preparing category report...
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const API = "/api/complaints";
+
+        const refreshButton = document.getElementById("refreshButton");
+        const statusElement = document.getElementById("status");
+
+        refreshButton.addEventListener("click", loadReport);
+
+        function money(value) {
+            return new Intl.NumberFormat("en-IN", {
+                style: "currency",
+                currency: "INR",
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+
+        function setStatus(message, type = "") {
+            statusElement.textContent = message;
+            statusElement.className = type;
+        }
+
+        function countPriority(complaints, priority) {
+            return complaints.filter(function(complaint) {
+                return String(complaint.priority || "").trim().toLowerCase()
+                    === priority.toLowerCase();
+            }).length;
+        }
+
+        function renderCategoryRows(complaints) {
+            const categoryCounts = {};
+
+            complaints.forEach(function(complaint) {
+                const category =
+                    String(complaint.category || "Uncategorized").trim()
+                    || "Uncategorized";
+
+                categoryCounts[category] =
+                    (categoryCounts[category] || 0) + 1;
+            });
+
+            const categories = Object.entries(categoryCounts)
+                .sort(function(a, b) {
+                    return b[1] - a[1] ||
+                        a[0].localeCompare(b[0]);
+                });
+
+            const categoryRows = document.getElementById("categoryRows");
+            categoryRows.replaceChildren();
+
+            if (categories.length === 0) {
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+
+                td.colSpan = 2;
+                td.innerHTML = "";
+                td.textContent = "No complaints found.";
+
+                tr.appendChild(td);
+                categoryRows.appendChild(tr);
+            } else {
+                categories.forEach(function(item) {
+                    const tr = document.createElement("tr");
+                    const categoryCell = document.createElement("td");
+                    const countCell = document.createElement("td");
+                    const badge = document.createElement("span");
+
+                    categoryCell.textContent = item[0];
+
+                    badge.className = "count-badge";
+                    badge.textContent = item[1];
+                    countCell.appendChild(badge);
+
+                    tr.append(categoryCell, countCell);
+                    categoryRows.appendChild(tr);
+                });
+            }
+
+            document.getElementById("categorySummary").textContent =
+                categories.length + " categor" +
+                (categories.length === 1 ? "y" : "ies") +
+                " found.";
+        }
+
+        async function loadReport() {
+            refreshButton.disabled = true;
+            refreshButton.textContent = "Loading...";
+            setStatus("Loading report...");
+
+            try {
+                const response = await fetch(API, {
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        "The complaints API returned HTTP "
+                        + response.status + "."
+                    );
+                }
+
+                const complaints = await response.json();
+
+                if (!Array.isArray(complaints)) {
+                    throw new Error(
+                        "Unexpected response from the complaints API."
+                    );
+                }
+
+                const totalLoss = complaints.reduce(function(sum, complaint) {
+                    const loss = Number(complaint.lossAmount);
+                    return sum + (
+                        Number.isFinite(loss) && loss > 0 ? loss : 0
+                    );
+                }, 0);
+
+                document.getElementById("totalComplaints").textContent =
+                    complaints.length;
+
+                document.getElementById("highPriority").textContent =
+                    countPriority(complaints, "HIGH");
+
+                document.getElementById("mediumPriority").textContent =
+                    countPriority(complaints, "MEDIUM");
+
+                document.getElementById("lowPriority").textContent =
+                    countPriority(complaints, "LOW");
+
+                document.getElementById("totalLoss").textContent =
+                    money(totalLoss);
+
+                renderCategoryRows(complaints);
+
+                setStatus(
+                    "Report updated successfully. Complaints found: "
+                    + complaints.length + ".",
+                    "success"
+                );
+
+            } catch (error) {
+                console.error("Could not load report:", error);
+
+                setStatus(
+                    "Could not load the report. Check that the complaint "
+                    + "service is running and /api/complaints is accessible.",
+                    "error"
+                );
+
+                document.getElementById("categoryRows").innerHTML = "";
+
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.colSpan = 2;
+                td.textContent = "Unable to load category data.";
+                tr.appendChild(td);
+
+                document.getElementById("categoryRows").appendChild(tr);
+                document.getElementById("categorySummary").textContent =
+                    "Category report unavailable.";
+
+            } finally {
+                refreshButton.disabled = false;
+                refreshButton.textContent = "↻ Refresh Report";
+            }
+        }
+
+        document.getElementById("helpLink").addEventListener(
+            "click",
+            function(event) {
+                event.preventDefault();
+                setStatus(
+                    "For help, contact your Cybercrime Management administrator."
+                );
+            }
+        );
+
+        loadReport();
+    </script>
+
+</body>
+</html>

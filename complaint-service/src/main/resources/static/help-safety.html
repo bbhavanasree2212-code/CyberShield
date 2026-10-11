@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Safety | CyberShield</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --navy: #0b1224;
+      --sidebar: #101a30;
+      --blue: #3478f6;
+      --text: #182238;
+      --muted: #718096;
+      --border: #e5eaf2;
+      --bg: #f4f7fb;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 255px;
+      padding: 25px 16px;
+      background: var(--navy);
+      color: #fff;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      z-index: 5;
+    }
+    .brand {
+      font-size: 22px;
+      font-weight: bold;
+      padding: 0 12px 28px;
+    }
+    .brand span { color: #63a0ff; }
+    .section-label {
+      color: #8493ad;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      padding: 13px 12px 9px;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin: 3px 0;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #bdc8db;
+      font-size: 14px;
+    }
+    .nav-link:hover { background: #1a2945; color: white; }
+    .nav-link.active { background: #2463d7; color: white; }
+    .nav-icon { width: 20px; text-align: center; }
+    .sidebar-footer {
+      margin-top: auto;
+      border-top: 1px solid #26334b;
+      padding: 20px 12px 0;
+      color: #91a0b8;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    main {
+      margin-left: 255px;
+      padding: 34px;
+      max-width: 1450px;
+    }
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    h1 { margin: 0 0 8px; font-size: 30px; }
+    h2 { font-size: 19px; margin: 0 0 15px; }
+    p { line-height: 1.65; }
+    .muted { color: var(--muted); }
+    .badge {
+      background: #e3edff;
+      color: #2459b3;
+      border-radius: 20px;
+      padding: 8px 13px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .hero {
+      background: linear-gradient(125deg, #14284c, #2563cf);
+      color: white;
+      padding: 27px;
+      border-radius: 16px;
+      margin-bottom: 22px;
+    }
+    .hero h2 { font-size: 23px; }
+    .hero p { color: #e0eaff; margin-bottom: 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 22px;
+      box-shadow: 0 3px 12px #1b31520a;
+      min-width: 0;
+    }
+    .card p { color: var(--muted); font-size: 14px; }
+    .card-icon {
+      font-size: 25px;
+      margin-bottom: 12px;
+    }
+    .btn {
+      display: inline-block;
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 15px;
+      font-size: 14px;
+      font-weight: bold;
+      background: var(--blue);
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn:hover { opacity: .9; }
+    .btn.secondary {
+      background: #eaf1ff;
+      color: #2459b3;
+    }
+    .helpline {
+      font-size: 32px;
+      font-weight: bold;
+      color: #167a4a;
+      margin: 8px 0;
+    }
+    .contact-email {
+      display: inline-block;
+      color: #2459b3;
+      font-weight: bold;
+      overflow-wrap: anywhere;
+      margin: 4px 0 15px;
+    }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: 0; }
+    .faq-item summary {
+      padding: 15px 0;
+      cursor: pointer;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+    .faq-item p { margin: 0 0 16px; }
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 13px;
+      margin: 15px 0 7px;
+    }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid #d6deeb;
+      border-radius: 8px;
+      padding: 12px;
+      font: inherit;
+      background: white;
+    }
+    textarea { min-height: 115px; resize: vertical; }
+    .notice {
+      border-radius: 9px;
+      background: #fff7e6;
+      border: 1px solid #f4d99d;
+      padding: 13px;
+      color: #795516;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .result {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      background: #effaf3;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+    .mobile-header { display: none; }
+    @media (max-width: 850px) {
+      .sidebar { width: 220px; }
+      main { margin-left: 220px; padding: 24px 18px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+        max-height: none;
+        padding: 15px 12px;
+      }
+      .brand { padding: 5px 10px 15px; }
+      .section-label { padding-top: 9px; }
+      .nav-link { padding: 10px; }
+      .sidebar-footer { margin-top: 15px; }
+      main { margin-left: 0; padding: 22px 14px; }
+      h1 { font-size: 25px; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">🛡️ Cyber<span>Shield</span></div>
+
+    <div class="section-label">WORKSPACE</div>
+    <a class="nav-link" href="/"><span class="nav-icon">▦</span>Dashboard</a>
+    <a class="nav-link" href="/complaint-new.html"><span class="nav-icon">✚</span>File a Complaint</a>
+    <a class="nav-link" href="/complaints.html"><span class="nav-icon">▤</span>My Complaints</a>
+
+    <div class="section-label">INFORMATION</div>
+    <a class="nav-link" href="/ai-analysis.html"><span class="nav-icon">✧</span>AI Assessment</a>
+    <a class="nav-link" href="/investigations.html"><span class="nav-icon">⌕</span>Investigations</a>
+    <a class="nav-link" href="/evidence.html"><span class="nav-icon">📁</span>Evidence</a>
+    <a class="nav-link" href="/reports.html"><span class="nav-icon">▥</span>Reports</a>
+    <a class="nav-link" href="/historical.html"><span class="nav-icon">◷</span>Historical Complaints</a>
+    <a class="nav-link" href="/alerts.html"><span class="nav-icon">🚨</span>Alerts &amp; Escalation</a>
+    <a class="nav-link active" href="/help-safety.html"><span class="nav-icon">ⓘ</span>Help &amp; Safety</a>
+
+    <div class="sidebar-footer">
+      <strong>Cybercrime Management</strong><br>
+      Complaint and investigation workspace
+    </div>
+  </aside>
+
+  <main>
+    <div class="page-heading">
+      <div>
+        <h1>Help &amp; Safety</h1>
+        <div class="muted">Guidance, cybercrime reporting and support resources.</div>
+      </div>
+      <span class="badge">SAFETY CENTER</span>
+    </div>
+
+    <section class="hero">
+      <h2>Stay safe online with CyberShield</h2>
+      <p>Learn how to report cybercrime, protect your accounts, preserve evidence and find the right support.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="card-icon">🚨</div>
+        <h2>Report cybercrime in India</h2>
+        <p>If you have lost money through an online financial fraud, contact the national cybercrime helpline promptly. You can also submit a report through the official government portal.</p>
+        <div class="helpline">1930</div>
+        <p>National cybercrime helpline for reporting financial cyber fraud.</p>
+        <a class="btn" href="https://www.cybercrime.gov.in/" target="_blank" rel="noopener noreferrer">Official Cybercrime Portal ↗</a>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">✉️</div>
+        <h2>Helpline email</h2>
+        <p>For questions about this CyberShield application, contact the support team at the email configured by your project administrator.</p>
+        <a class="contact-email" id="supportEmailText" href="mailto:YOUR-HELPLINE@gmail.com">YOUR-HELPLINE@gmail.com</a>
+        <p>Replace the placeholder with your real support Gmail address in this file.</p>
+        <a class="btn secondary" id="emailButton" href="mailto:YOUR-HELPLINE@gmail.com">Email Support</a>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">📝</div>
+        <h2>Quick links</h2>
+        <p>Go directly to the main CyberShield features.</p>
+        <p><a href="/complaint-new.html">File a Complaint</a></p>
+        <p><a href="/complaints.html">View My Complaints</a></p>
+        <p><a href="/evidence.html">Manage Evidence</a></p>
+        <p><a href="/alerts.html">View Alerts &amp; Escalation</a></p>
+      </article>
+
+      <article class="card">
+        <div class="card-icon">🔐</div>
+        <h2>Online safety checklist</h2>
+        <p>✓ Use unique passwords and enable two-factor authentication.</p>
+        <p>✓ Never share an OTP, PIN or banking password.</p>
+        <p>✓ Verify payment requests and links before opening them.</p>
+        <p>✓ Keep screenshots, transaction IDs, phone numbers and relevant messages as evidence.</p>
+        <p>✓ Contact your bank immediately if you suspect financial fraud.</p>
+      </article>
+    </section>
+
+    <section class="card" style="margin-bottom:22px">
+      <h2>Frequently asked questions</h2>
+      <details class="faq-item">
+        <summary>How do I report an online financial scam?</summary>
+        <p>Contact India's cybercrime helpline at 1930 as soon as possible and submit details through the official portal at cybercrime.gov.in. Contact your bank or payment provider as well.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What evidence should I keep?</summary>
+        <p>Keep screenshots, payment receipts, transaction references, suspicious URLs, phone numbers, emails and relevant chat messages. Do not alter the original evidence.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What should I do if my account is compromised?</summary>
+        <p>Change your password from a trusted device, secure your recovery email, enable two-factor authentication, sign out other sessions and contact the affected service provider.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does this page send a support ticket?</summary>
+        <p>No. This page provides contact information and a draft-message helper. It does not store or submit support tickets to a server.</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>Prepare a support message</h2>
+      <p class="muted">Create a message that you can copy or open in your email application.</p>
+      <div class="notice">Do not include passwords, OTPs, full card numbers or other sensitive authentication information in your message.</div>
+
+      <form id="supportForm">
+        <label for="topic">Topic</label>
+        <select id="topic" required>
+          <option value="">Select a topic</option>
+          <option>Complaint assistance</option>
+          <option>Evidence upload</option>
+          <option>Account security</option>
+          <option>Technical problem</option>
+          <option>Other enquiry</option>
+        </select>
+
+        <label for="message">Message</label>
+        <textarea id="message" required maxlength="2000" placeholder="Describe the issue without sharing passwords or OTPs..."></textarea>
+
+        <button class="btn" type="submit">Prepare Message</button>
+      </form>
+
+      <div class="result" id="messageResult" aria-live="polite">
+        <strong>Your message is ready.</strong>
+        <p id="preparedMessage" style="white-space:pre-wrap"></p>
+        <button class="btn secondary" type="button" id="copyButton">Copy Message</button>
+        <a class="btn" id="composeButton" href="#">Open Email</a>
+        <p id="copyStatus" class="muted"></p>
+      </div>
+    </section>
+
+    <p class="muted" style="text-align:center;font-size:12px;margin-top:25px">
+      CyberShield · Help &amp; Safety · For emergencies, contact the appropriate local authorities.
+    </p>
+  </main>
+
+  <script>
+    // Replace this with your actual support team's Gmail address.
+    const SUPPORT_EMAIL = "YOUR-HELPLINE@gmail.com";
+
+    const emailLink = "mailto:" + SUPPORT_EMAIL;
+    document.getElementById("supportEmailText").textContent = SUPPORT_EMAIL;
+    document.getElementById("supportEmailText").href = emailLink;
+    document.getElementById("emailButton").href = emailLink;
+
+    let currentMessage = "";
+
+    document.getElementById("supportForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const topic = document.getElementById("topic").value;
+      const message = document.getElementById("message").value.trim();
+
+      currentMessage =
+        "CyberShield Help & Safety enquiry\n\n" +
+        "Topic: " + topic + "\n\n" +
+        "Message:\n" + message;
+
+      document.getElementById("preparedMessage").textContent = currentMessage;
+      document.getElementById("composeButton").href =
+        "mailto:" + SUPPORT_EMAIL +
+        "?subject=" + encodeURIComponent("CyberShield Support: " + topic) +
+        "&body=" + encodeURIComponent(currentMessage);
+
+      document.getElementById("messageResult").style.display = "block";
+      document.getElementById("copyStatus").textContent = "";
+    });
+
+    document.getElementById("copyButton").addEventListener("click", async function () {
+      const status = document.getElementById("copyStatus");
+      try {
+        await navigator.clipboard.writeText(currentMessage);
+        status.textContent = "Message copied.";
+      } catch (error) {
+        status.textContent = "Clipboard access is unavailable. Select and copy the message above.";
+      }
+    });
+  </script>
+</body>
+</html>

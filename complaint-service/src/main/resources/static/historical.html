@@ -1,0 +1,847 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Complaints | CyberShield</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        :root {
+            --navy: #101a33;
+            --navy-light: #202e50;
+            --active: #3447a7;
+            --blue: #425be8;
+            --sidebar-text: #d5dced;
+            --sidebar-muted: #91a0bd;
+            --page-bg: #f4f7fb;
+            --border: #e2e8f0;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--page-bg);
+            color: #1e293b;
+        }
+
+        /* Dashboard-style sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background: var(--navy);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 15px 16px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 10px 28px;
+            font-size: 21px;
+            font-weight: bold;
+            letter-spacing: .2px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--active);
+            font-size: 21px;
+            flex-shrink: 0;
+        }
+
+        .nav-section {
+            margin: 8px 10px 10px;
+            color: var(--sidebar-muted);
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 43px;
+            padding: 11px 12px;
+            margin-bottom: 5px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 13px;
+            transition: background .18s, color .18s;
+        }
+
+        .nav-link:hover {
+            background: var(--navy-light);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--active);
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            width: 19px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-spacer { flex: 1; min-height: 20px; }
+
+        .sidebar-footer {
+            border-top: 1px solid #2a3652;
+            padding: 18px 10px 5px;
+            margin-top: 18px;
+        }
+
+        .sidebar-footer strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .sidebar-footer span {
+            display: block;
+            color: var(--sidebar-muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* Main page */
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px;
+            font-size: 25px;
+            color: #172554;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        main {
+            max-width: 1500px;
+            margin: 25px auto;
+            padding: 0 25px;
+        }
+
+        .notice {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            padding: 14px;
+            border-radius: 9px;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 22px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(15, 23, 42, .025);
+        }
+
+        h2 { margin: 0 0 8px; font-size: 19px; }
+
+        .muted {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .search-row {
+            display: flex;
+            align-items: end;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        label { font-size: 13px; font-weight: bold; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 14px;
+            background: white;
+        }
+
+        input:focus {
+            outline: 2px solid #bfdbfe;
+            border-color: var(--blue);
+        }
+
+        button {
+            padding: 12px 17px;
+            border: 0;
+            border-radius: 7px;
+            background: var(--blue);
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover { background: #3347c5; }
+        button:disabled { opacity: .6; cursor: wait; }
+
+        .secondary {
+            background: #eaf1ff;
+            color: #1d4ed8;
+        }
+
+        .secondary:hover { background: #dbeafe; }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 10px;
+        }
+
+        .summary-card div:first-child {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .table-wrap { overflow-x: auto; margin-top: 16px; }
+
+        table {
+            width: 100%;
+            min-width: 800px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 13px 11px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #334155;
+            border-radius: 20px;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .high { background: #fee2e2; color: #b91c1c; }
+        .medium { background: #ffedd5; color: #9a3412; }
+        .low { background: #dcfce7; color: #166534; }
+
+        .message {
+            margin-top: 14px;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .error { color: #b91c1c; }
+        .success { color: #166534; }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+            padding: 25px;
+        }
+
+        .factors { color: #475569; font-size: 12px; }
+
+        .page-footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 12px;
+            padding: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 205px;
+                padding-left: 11px;
+                padding-right: 11px;
+            }
+
+            .main-content { margin-left: 205px; }
+
+            .page-header { padding: 22px; }
+            main { padding: 0 18px; }
+        }
+
+        @media (max-width: 650px) {
+            .sidebar {
+                width: 70px;
+                padding: 18px 8px;
+                align-items: stretch;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0 0 24px;
+            }
+
+            .brand-name,
+            .nav-section,
+            .nav-label,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 12px 5px;
+                gap: 0;
+            }
+
+            .nav-icon {
+                width: auto;
+                font-size: 19px;
+            }
+
+            .main-content { margin-left: 70px; }
+
+            .page-header { padding: 19px 16px; }
+            .page-header h1 { font-size: 21px; }
+
+            main { padding: 0 12px; margin-top: 16px; }
+            .summary-grid { grid-template-columns: 1fr; }
+            .panel { padding: 16px; }
+            .search-row { align-items: stretch; }
+            .search-row button { width: 100%; }
+            .field { min-width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <span class="brand-name">CyberShield</span>
+    </div>
+
+    <div class="nav-section">WORKSPACE</div>
+
+    <a class="nav-link" href="/">
+        <span class="nav-icon">▦</span>
+        <span class="nav-label">Dashboard</span>
+    </a>
+
+    <a class="nav-link" href="/complaint-new.html">
+        <span class="nav-icon">✚</span>
+        <span class="nav-label">File a Complaint</span>
+    </a>
+
+    <a class="nav-link" href="/complaints.html">
+        <span class="nav-icon">▤</span>
+        <span class="nav-label">My Complaints</span>
+    </a>
+
+    <div class="nav-section">INFORMATION</div>
+
+    <a class="nav-link" href="/ai-analysis.html">
+        <span class="nav-icon">✧</span>
+        <span class="nav-label">AI Assessment</span>
+    </a>
+
+    <a class="nav-link" href="/investigations.html">
+        <span class="nav-icon">🔎</span>
+        <span class="nav-label">Investigations</span>
+    </a>
+
+    <a class="nav-link" href="/evidence.html">
+        <span class="nav-icon">📁</span>
+        <span class="nav-label">Evidence</span>
+    </a>
+
+    <a class="nav-link" href="/reports.html">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Reports</span>
+    </a>
+
+    <a class="nav-link active" href="/historical.html" aria-current="page">
+        <span class="nav-icon">◷</span>
+        <span class="nav-label">Historical Complaints</span>
+    </a>
+
+    <a class="nav-link" href="/alerts.html">
+        <span class="nav-icon">🚨</span>
+        <span class="nav-label">Alerts &amp; Escalation</span>
+    </a>
+
+    <a class="nav-link" href="#" id="helpLink">
+        <span class="nav-icon">ⓘ</span>
+        <span class="nav-label">Help &amp; Safety</span>
+    </a>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-footer">
+        <strong>Cybercrime Management</strong>
+        <span>Complaint and investigation workspace</span>
+    </div>
+</aside>
+
+<div class="main-content">
+    <header class="page-header">
+        <h1>Historical Complaint Analysis</h1>
+        <p>Compare a complaint with previously recorded cases.</p>
+    </header>
+
+    <main>
+        <div class="notice">
+            <strong>Investigation note:</strong>
+            Similarity results identify potential matches only. A shared category,
+            description, or amount does not prove that two complaints are connected.
+            Verify findings and evidence through authorized investigation procedures.
+        </div>
+
+        <section class="panel">
+            <h2>Find Related Historical Complaints</h2>
+            <p class="muted">
+                Enter the ID of an existing complaint. The page will request the
+                historical comparison API and display its results.
+            </p>
+
+            <form id="searchForm" class="search-row">
+                <div class="field">
+                    <label for="complaintId">Complaint ID</label>
+                    <input
+                        id="complaintId"
+                        type="number"
+                        min="1"
+                        step="1"
+                        placeholder="For example, 21"
+                        required
+                    >
+                </div>
+                <button id="searchButton" type="submit">Compare Complaints</button>
+                <button id="loadAllButton" class="secondary" type="button">
+                    Load Complaints
+                </button>
+            </form>
+
+            <div id="message" class="message" role="status" aria-live="polite"></div>
+        </section>
+
+        <section class="summary-grid">
+            <div class="summary-card">
+                <div>Selected Complaint</div>
+                <div class="summary-value" id="selectedId">—</div>
+            </div>
+            <div class="summary-card">
+                <div>Potential Matches Returned</div>
+                <div class="summary-value" id="matchCount">—</div>
+            </div>
+            <div class="summary-card">
+                <div>Analysis Method</div>
+                <div class="summary-value" style="font-size:16px" id="analysisMethod">
+                    Not run
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Comparison Results</h2>
+            <p class="muted">
+                Results are supplied by your Spring Boot backend. The displayed
+                similarity percentage is a comparison score, not a probability of guilt.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Complaint ID</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Similarity</th>
+                        <th>Reported Loss</th>
+                        <th>Description</th>
+                        <th>Matching Factors</th>
+                    </tr>
+                    </thead>
+                    <tbody id="resultsTable">
+                    <tr>
+                        <td colspan="7" class="empty">
+                            Enter a complaint ID and select Compare Complaints.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>All Recorded Complaints</h2>
+            <p class="muted">
+                Select a complaint ID below to compare it with historical records.
+            </p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Reported Loss</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="allComplaintsTable">
+                    <tr>
+                        <td colspan="6" class="empty">
+                            Select Load Complaints to retrieve records.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer class="page-footer">
+        CyberShield · Historical comparison is decision support, not proof of a connection.
+    </footer>
+</div>
+
+<script>
+    const COMPLAINTS_API = "/api/complaints";
+    const message = document.getElementById("message");
+    const resultsTable = document.getElementById("resultsTable");
+    const allComplaintsTable = document.getElementById("allComplaintsTable");
+    const searchButton = document.getElementById("searchButton");
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (char) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[char];
+        });
+    }
+
+    function valueOrDash(value) {
+        return value === null || value === undefined || value === ""
+            ? "—"
+            : String(value);
+    }
+
+    function currency(value) {
+        const amount = Number(value ?? 0);
+        if (!Number.isFinite(amount)) return "—";
+
+        return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+            maximumFractionDigits: 2
+        }).format(amount);
+    }
+
+    function priorityClass(value) {
+        const p = String(value ?? "").toLowerCase();
+        if (p.includes("high") || p.includes("critical")) return "high";
+        if (p.includes("medium")) return "medium";
+        if (p.includes("low")) return "low";
+        return "";
+    }
+
+    function showMessage(text, type = "") {
+        message.className = "message " + type;
+        message.textContent = text;
+    }
+
+    function resetResults(text) {
+        document.getElementById("selectedId").textContent = "—";
+        document.getElementById("matchCount").textContent = "—";
+        document.getElementById("analysisMethod").textContent = "Not run";
+
+        resultsTable.innerHTML =
+            '<tr><td colspan="7" class="empty">' +
+            escapeHTML(text) +
+            '</td></tr>';
+    }
+
+    async function compareComplaint(id) {
+        const complaintId = Number(id);
+
+        if (!Number.isSafeInteger(complaintId) || complaintId < 1) {
+            showMessage("Enter a valid positive complaint ID.", "error");
+            return;
+        }
+
+        searchButton.disabled = true;
+        showMessage("Comparing complaint with historical records…");
+
+        resultsTable.innerHTML =
+            '<tr><td colspan="7" class="empty">Loading comparison results…</td></tr>';
+
+        try {
+            const response = await fetch(
+                COMPLAINTS_API + "/related/" + encodeURIComponent(complaintId),
+                { headers: { "Accept": "application/json" } }
+            );
+
+            const body = await response.text();
+
+            if (!response.ok) {
+                throw new Error(
+                    "Comparison API returned HTTP " + response.status +
+                    (body ? ": " + body : "")
+                );
+            }
+
+            const data = JSON.parse(body);
+
+            document.getElementById("selectedId").textContent =
+                valueOrDash(data.complaintId ?? complaintId);
+
+            document.getElementById("analysisMethod").textContent =
+                valueOrDash(data.analysisMethod);
+
+            const matches = Array.isArray(data.relatedComplaints)
+                ? data.relatedComplaints
+                : [];
+
+            document.getElementById("matchCount").textContent = matches.length;
+
+            if (matches.length === 0) {
+                resultsTable.innerHTML =
+                    '<tr><td colspan="7" class="empty">' +
+                    'No potential historical matches were returned for this complaint.' +
+                    '</td></tr>';
+            } else {
+                resultsTable.innerHTML = matches.map(function (item) {
+                    const similarity = Number(item.similarityPercent);
+                    const similarityText = Number.isFinite(similarity)
+                        ? similarity + "%"
+                        : "—";
+
+                    let factors = [];
+
+                    if (Array.isArray(item.matchFactors)) {
+                        factors = item.matchFactors;
+                    } else if (Array.isArray(item.sharedTerms)) {
+                        factors = item.sharedTerms;
+                    }
+
+                    const factorsText = factors.length
+                        ? factors.map(valueOrDash).map(escapeHTML).join(", ")
+                        : "No factors supplied";
+
+                    return `
+                        <tr>
+                            <td>${escapeHTML(valueOrDash(item.id))}</td>
+                            <td>${escapeHTML(valueOrDash(item.category))}</td>
+                            <td>
+                                <span class="tag ${priorityClass(item.priority)}">
+                                    ${escapeHTML(valueOrDash(item.priority))}
+                                </span>
+                            </td>
+                            <td><strong>${escapeHTML(similarityText)}</strong></td>
+                            <td>${escapeHTML(currency(item.lossAmount))}</td>
+                            <td>${escapeHTML(valueOrDash(item.description))}</td>
+                            <td class="factors">${factorsText}</td>
+                        </tr>
+                    `;
+                }).join("");
+            }
+
+            const note = data.note
+                ? " " + data.note
+                : " Review all potential matches manually.";
+
+            showMessage("Historical comparison completed." + note, "success");
+
+        } catch (error) {
+            console.error("Historical comparison failed:", error);
+            resetResults("Comparison could not be loaded.");
+
+            showMessage(
+                "Unable to retrieve historical comparisons. Check the complaint ID and confirm that GET " +
+                "/api/complaints/related/{id} is available. " + error.message,
+                "error"
+            );
+        } finally {
+            searchButton.disabled = false;
+        }
+    }
+
+    document.getElementById("searchForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        compareComplaint(document.getElementById("complaintId").value);
+    });
+
+    async function loadAllComplaints() {
+        allComplaintsTable.innerHTML =
+            '<tr><td colspan="6" class="empty">Loading complaints…</td></tr>';
+
+        try {
+            const response = await fetch(COMPLAINTS_API, {
+                headers: { "Accept": "application/json" }
+            });
+
+            if (!response.ok) {
+                throw new Error("Complaints API returned HTTP " + response.status);
+            }
+
+            const complaints = await response.json();
+
+            if (!Array.isArray(complaints)) {
+                throw new Error("Expected the complaints API to return a JSON array.");
+            }
+
+            if (complaints.length === 0) {
+                allComplaintsTable.innerHTML =
+                    '<tr><td colspan="6" class="empty">No complaints found.</td></tr>';
+
+                showMessage(
+                    "The complaint list loaded, but no records were found.",
+                    "success"
+                );
+                return;
+            }
+
+            allComplaintsTable.innerHTML = complaints.map(function (item) {
+                return `
+                    <tr>
+                        <td>${escapeHTML(valueOrDash(item.id))}</td>
+                        <td>${escapeHTML(valueOrDash(item.category))}</td>
+                        <td>
+                            <span class="tag ${priorityClass(item.priority)}">
+                                ${escapeHTML(valueOrDash(item.priority))}
+                            </span>
+                        </td>
+                        <td>${escapeHTML(currency(item.lossAmount))}</td>
+                        <td>${escapeHTML(valueOrDash(item.description))}</td>
+                        <td>
+                            <button
+                                type="button"
+                                class="compare-row secondary"
+                                data-id="${escapeHTML(item.id)}"
+                            >Compare</button>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+
+            showMessage(
+                "Loaded " + complaints.length + " complaint records.",
+                "success"
+            );
+
+        } catch (error) {
+            console.error("Loading complaints failed:", error);
+
+            allComplaintsTable.innerHTML =
+                '<tr><td colspan="6" class="empty">Could not load complaints.</td></tr>';
+
+            showMessage(
+                "Unable to load complaints. Check GET /api/complaints. " + error.message,
+                "error"
+            );
+        }
+    }
+
+    allComplaintsTable.addEventListener("click", function (event) {
+        const button = event.target.closest("button[data-id]");
+        if (!button) return;
+
+        const id = button.dataset.id;
+        document.getElementById("complaintId").value = id;
+        compareComplaint(id);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.getElementById("loadAllButton").addEventListener("click", loadAllComplaints);
+
+    document.getElementById("helpLink").addEventListener("click", function (event) {
+        event.preventDefault();
+        alert(
+            "CyberShield Help & Safety\n\n" +
+            "Use the official reporting and support channels for assistance. " +
+            "Historical matches are suggestions for review, not proof that complaints are connected."
+        );
+    });
+</script>
+
+</body>
+</html>

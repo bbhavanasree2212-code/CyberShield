@@ -1,0 +1,734 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerts &amp; Escalation | CyberShield</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        :root {
+            --navy: #101a33;
+            --navy-light: #202e50;
+            --active: #3447a7;
+            --blue: #425be8;
+            --sidebar-text: #d5dced;
+            --sidebar-muted: #91a0bd;
+            --page-bg: #f4f7fb;
+            --border: #e2e8f0;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--page-bg);
+            color: #1e293b;
+        }
+
+        /* Dashboard sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            background: var(--navy);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 15px 16px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 10px 28px;
+            font-size: 21px;
+            font-weight: bold;
+            letter-spacing: .2px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--active);
+            font-size: 21px;
+            flex-shrink: 0;
+        }
+
+        .nav-section {
+            margin: 8px 10px 10px;
+            color: var(--sidebar-muted);
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 43px;
+            padding: 11px 12px;
+            margin-bottom: 5px;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 13px;
+            transition: background .18s, color .18s;
+        }
+
+        .nav-link:hover {
+            background: var(--navy-light);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: var(--active);
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            width: 19px;
+            text-align: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-spacer {
+            flex: 1;
+            min-height: 20px;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid #2a3652;
+            padding: 18px 10px 5px;
+            margin-top: 18px;
+        }
+
+        .sidebar-footer strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .sidebar-footer span {
+            display: block;
+            color: var(--sidebar-muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* Main layout */
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px;
+            font-size: 25px;
+            color: #172554;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        main {
+            max-width: 1500px;
+            margin: 25px auto;
+            padding: 0 25px;
+        }
+
+        .notice {
+            padding: 14px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 9px;
+            color: #1e40af;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 5px rgba(15, 23, 42, .025);
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        h2 {
+            font-size: 19px;
+            margin: 0 0 8px;
+        }
+
+        .muted {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .alert {
+            border: 1px solid var(--border);
+            border-left: 5px solid #94a3b8;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 13px;
+            background: white;
+        }
+
+        .alert.high,
+        .alert.critical {
+            border-left-color: #dc2626;
+        }
+
+        .alert.pending {
+            border-left-color: #d97706;
+        }
+
+        .alert h3 {
+            margin: 0 0 8px;
+            font-size: 15px;
+        }
+
+        .alert p {
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            font-size: 11px;
+            font-weight: bold;
+            margin: 0 4px 4px 0;
+        }
+
+        .tag.high,
+        .tag.critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .tag.pending {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .tag.normal {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        button {
+            padding: 10px 13px;
+            background: var(--blue);
+            color: white;
+            border: 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        button:hover { background: #3347c5; }
+
+        button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .secondary {
+            background: #eaf1ff;
+            color: #1d4ed8;
+        }
+
+        .secondary:hover { background: #dbeafe; }
+
+        .empty {
+            padding: 25px;
+            text-align: center;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .page-footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 205px;
+                padding-left: 11px;
+                padding-right: 11px;
+            }
+
+            .main-content { margin-left: 205px; }
+            .page-header { padding: 22px; }
+            main { padding: 0 18px; }
+        }
+
+        @media (max-width: 650px) {
+            .sidebar {
+                width: 70px;
+                padding: 18px 8px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0 0 24px;
+            }
+
+            .brand-name,
+            .nav-section,
+            .nav-label,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 12px 5px;
+                gap: 0;
+            }
+
+            .nav-icon {
+                width: auto;
+                font-size: 19px;
+            }
+
+            .main-content { margin-left: 70px; }
+
+            .page-header { padding: 19px 16px; }
+            .page-header h1 { font-size: 21px; }
+
+            main {
+                padding: 0 12px;
+                margin-top: 16px;
+            }
+
+            .stats { grid-template-columns: 1fr; }
+            .card { padding: 16px; }
+            .toolbar button { flex: 1 1 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+    <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <span class="brand-name">CyberShield</span>
+    </div>
+
+    <div class="nav-section">WORKSPACE</div>
+
+    <a class="nav-link" href="/">
+        <span class="nav-icon">▦</span>
+        <span class="nav-label">Dashboard</span>
+    </a>
+
+    <a class="nav-link" href="/complaint-new.html">
+        <span class="nav-icon">✚</span>
+        <span class="nav-label">File a Complaint</span>
+    </a>
+
+    <a class="nav-link" href="/complaints.html">
+        <span class="nav-icon">▤</span>
+        <span class="nav-label">My Complaints</span>
+    </a>
+
+    <div class="nav-section">INFORMATION</div>
+
+    <a class="nav-link" href="/ai-analysis.html">
+        <span class="nav-icon">✧</span>
+        <span class="nav-label">AI Assessment</span>
+    </a>
+
+    <a class="nav-link" href="/investigations.html">
+        <span class="nav-icon">🔎</span>
+        <span class="nav-label">Investigations</span>
+    </a>
+
+    <a class="nav-link" href="/evidence.html">
+        <span class="nav-icon">📁</span>
+        <span class="nav-label">Evidence</span>
+    </a>
+
+    <a class="nav-link" href="/reports.html">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Reports</span>
+    </a>
+
+    <a class="nav-link" href="/historical.html">
+        <span class="nav-icon">◷</span>
+        <span class="nav-label">Historical Complaints</span>
+    </a>
+
+    <a class="nav-link active" href="/alerts.html" aria-current="page">
+        <span class="nav-icon">🚨</span>
+        <span class="nav-label">Alerts &amp; Escalation</span>
+    </a>
+
+    <a class="nav-link" href="#" id="helpLink">
+        <span class="nav-icon">ⓘ</span>
+        <span class="nav-label">Help &amp; Safety</span>
+    </a>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="sidebar-footer">
+        <strong>Cybercrime Management</strong>
+        <span>Complaint and investigation workspace</span>
+    </div>
+</aside>
+
+<div class="main-content">
+
+    <header class="page-header">
+        <h1>🚨 Alerts &amp; Escalation</h1>
+        <p>Review high-priority complaints and cases that may need follow-up.</p>
+    </header>
+
+    <main>
+        <div class="notice">
+            <strong>Alert policy:</strong> These alerts are generated from the complaint
+            priority and status currently returned by the API. They are indicators for
+            staff review, not proof of fraud. Urgent cases should be escalated through
+            your organization's approved procedures.
+        </div>
+
+        <section class="stats">
+            <div class="card">
+                <div class="stat-label">High / Critical Priority</div>
+                <div class="stat-value" id="highCount">—</div>
+            </div>
+
+            <div class="card">
+                <div class="stat-label">Potentially Pending</div>
+                <div class="stat-value" id="pendingCount">—</div>
+            </div>
+
+            <div class="card">
+                <div class="stat-label">Total Alerts</div>
+                <div class="stat-value" id="alertCount">—</div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Alert Centre</h2>
+            <p class="muted">
+                Refresh the list to check the latest complaints. Open a complaint in
+                your complaint management page for further review.
+            </p>
+
+            <div class="toolbar">
+                <button id="refreshButton" type="button">↻ Refresh Alerts</button>
+                <button id="allButton" class="secondary" type="button">
+                    Show All Complaints
+                </button>
+            </div>
+
+            <div id="message" role="status" aria-live="polite"></div>
+
+            <div id="alertsList">
+                <div class="empty">Loading alerts…</div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="page-footer">
+        CyberShield · Alert indicators require human review and authorized follow-up.
+    </footer>
+
+</div>
+
+<script>
+    const API = "/api/complaints";
+    const alertsList = document.getElementById("alertsList");
+    const message = document.getElementById("message");
+
+    let complaints = [];
+    let showingAll = false;
+
+    function esc(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (c) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[c];
+        });
+    }
+
+    function statusOf(c) {
+        return String(c.status ?? "").trim().toLowerCase();
+    }
+
+    function priorityOf(c) {
+        return String(c.priority ?? "").trim().toLowerCase();
+    }
+
+    function isHigh(c) {
+        const p = priorityOf(c);
+        return p.includes("critical") || p.includes("high");
+    }
+
+    function isPending(c) {
+        const s = statusOf(c);
+        return s.includes("pending") || s.includes("open") || s === "new";
+    }
+
+    function isClosed(c) {
+        const s = statusOf(c);
+        return s.includes("closed") ||
+               s.includes("resolved") ||
+               s.includes("completed");
+    }
+
+    function classifyAlert(c) {
+        if (priorityOf(c).includes("critical")) return "critical";
+        if (isHigh(c)) return "high";
+        if (isPending(c) && !isClosed(c)) return "pending";
+        return "normal";
+    }
+
+    function updateStats(items) {
+        const high = items.filter(isHigh).length;
+
+        const pending = items.filter(function (c) {
+            return isPending(c) && !isClosed(c);
+        }).length;
+
+        const alertTotal = items.filter(function (c) {
+            return isHigh(c) || (isPending(c) && !isClosed(c));
+        }).length;
+
+        document.getElementById("highCount").textContent = high;
+        document.getElementById("pendingCount").textContent = pending;
+        document.getElementById("alertCount").textContent = alertTotal;
+    }
+
+    function renderAlerts(items, showAll = false) {
+        const displayed = showAll
+            ? items
+            : items.filter(function (c) {
+                return isHigh(c) || (isPending(c) && !isClosed(c));
+            });
+
+        if (!displayed.length) {
+            alertsList.innerHTML =
+                '<div class="empty">' +
+                'No matching alerts were found in the current complaint data.' +
+                '</div>';
+            return;
+        }
+
+        alertsList.innerHTML = displayed.map(function (c) {
+            const level = classifyAlert(c);
+
+            const title = level === "critical"
+                ? "Critical-priority complaint"
+                : level === "high"
+                ? "High-priority complaint"
+                : level === "pending"
+                ? "Pending complaint requires review"
+                : "Complaint record";
+
+            const id = esc(c.id ?? "Unknown");
+            const category = esc(c.category ?? "Unclassified");
+            const priority = esc(c.priority ?? "Not assigned");
+            const status = esc(c.status ?? "Not assigned");
+            const description = esc(c.description ?? "No description provided");
+
+            const amount = Number(c.lossAmount ?? 0);
+
+            const loss = Number.isFinite(amount)
+                ? new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                    maximumFractionDigits: 2
+                }).format(amount)
+                : "Not available";
+
+            const reason = level === "critical" || level === "high"
+                ? "Priority is marked high or critical. Review urgency and follow the approved escalation process."
+                : level === "pending"
+                ? "The current status appears pending or open. Check whether follow-up is required."
+                : "This complaint is displayed for reference.";
+
+            return `
+                <article class="alert ${level}">
+                    <h3>${title} — Complaint #${id}</h3>
+
+                    <span class="tag ${level}">${priority}</span>
+                    <span class="tag">${status}</span>
+
+                    <p><strong>Category:</strong> ${category}</p>
+                    <p><strong>Description:</strong> ${description}</p>
+                    <p><strong>Reported loss:</strong> ${esc(loss)}</p>
+                    <p>${reason}</p>
+
+                    <button
+                        type="button"
+                        data-open-id="${id}"
+                        aria-label="Open complaint list to review complaint ${id}"
+                    >Open Complaint Page</button>
+                </article>
+            `;
+        }).join("");
+    }
+
+    async function loadAlerts(showAll = false) {
+        const refreshButton = document.getElementById("refreshButton");
+
+        refreshButton.disabled = true;
+        document.getElementById("allButton").disabled = true;
+
+        message.textContent = "Loading complaint records…";
+        alertsList.innerHTML = '<div class="empty">Loading…</div>';
+
+        try {
+            const response = await fetch(API, {
+                headers: { "Accept": "application/json" }
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    "Complaint API returned HTTP " + response.status
+                );
+            }
+
+            const data = await response.json();
+
+            if (!Array.isArray(data)) {
+                throw new Error(
+                    "Expected a JSON array from GET /api/complaints."
+                );
+            }
+
+            complaints = data;
+            showingAll = showAll;
+
+            updateStats(complaints);
+            renderAlerts(complaints, showingAll);
+
+            message.textContent =
+                "Loaded " + complaints.length +
+                " complaint records. Alert indicators are based on returned priority and status fields.";
+
+            document.getElementById("allButton").textContent = showingAll
+                ? "Show Priority Alerts"
+                : "Show All Complaints";
+
+        } catch (error) {
+            console.error("Loading alerts failed:", error);
+
+            alertsList.innerHTML =
+                '<div class="empty">Could not load alerts from the complaint service.</div>';
+
+            message.textContent =
+                "Error: " + error.message +
+                ". Check that the backend is running and GET /api/complaints works.";
+
+        } finally {
+            refreshButton.disabled = false;
+            document.getElementById("allButton").disabled = false;
+        }
+    }
+
+    alertsList.addEventListener("click", function (event) {
+        const button = event.target.closest("button[data-open-id]");
+        if (!button) return;
+
+        // Use the existing complaints page; no detail route is assumed.
+        window.location.href = "/complaints.html";
+    });
+
+    document.getElementById("refreshButton").addEventListener("click", function () {
+        loadAlerts(showingAll);
+    });
+
+    document.getElementById("allButton").addEventListener("click", function () {
+        loadAlerts(!showingAll);
+    });
+
+    document.getElementById("helpLink").addEventListener("click", function (event) {
+        event.preventDefault();
+
+        alert(
+            "CyberShield Help & Safety\n\n" +
+            "Review complaint details and follow your organization's approved escalation procedures. " +
+            "Alert indicators require human review and do not prove fraud."
+        );
+    });
+
+    loadAlerts(false);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberShield | AI Analysis</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f4f6fb; color: #1b2540; }
+    header { background: #101a33; color: white; padding: 20px 28px; }
+    nav { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; }
+    nav a { color: #dce4ff; text-decoration: none; font-size: 14px; }
+    main { max-width: 950px; margin: 28px auto; padding: 0 18px; }
+    .panel { background: white; border: 1px solid #e8ebf3; border-radius: 12px; padding: 22px; margin-bottom: 20px; }
+    select, button { padding: 11px 13px; border: 1px solid #dce1ed; border-radius: 7px; font: inherit; }
+    select { width: 100%; margin: 12px 0; }
+    button { background: #425be8; color: white; cursor: pointer; border: 0; }
+    .muted { color: #7b8499; font-size: 13px; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+    .item { background: #f8f9fd; border-radius: 9px; padding: 16px; overflow-wrap: anywhere; }
+    .label { color: #7b8499; font-size: 12px; margin-bottom: 8px; }
+    .value { font-size: 18px; font-weight: bold; }
+    .notice { margin-top: 15px; padding: 12px; border-radius: 7px; display: none; }
+    .error { display: block; background: #fff0f0; color: #a52222; }
+    .pill { display: inline-block; padding: 5px 10px; border-radius: 20px; background: #e8edff; color: #344fcb; }
+    .high { background: #ffe7e7; color: #b42318; }
+    .medium { background: #fff0d4; color: #996200; }
+    .low { background: #dcf7e9; color: #08784e; }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CyberShield</h1>
+    <p>AI-Assisted Complaint Assessment</p>
+    <nav>
+      <a href="/">Dashboard</a>
+      <a href="/complaints.html">Complaints</a>
+      <a href="/complaint-new.html">New Complaint</a>
+      <a href="/ai-analysis.html">AI Analysis</a>
+      <a href="/investigations.html">Investigations</a>
+      <a href="/evidence.html">Evidence</a>
+      <a href="/reports.html">Reports</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Complaint AI Analysis</h2>
+      <p class="muted">Select a saved complaint to review its recorded category, priority, and reported financial loss.</p>
+      <label for="complaintSelect">Saved complaint</label>
+      <select id="complaintSelect">
+        <option value="">Loading complaints...</option>
+      </select>
+      <button id="refreshButton">Refresh complaints</button>
+      <div id="notice" class="notice" role="status"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Assessment Details</h2>
+      <p id="empty" class="muted">Choose a complaint above to see its recorded assessment.</p>
+      <div id="details" class="grid" hidden>
+        <div class="item"><div class="label">Complaint ID</div><div class="value" id="caseId">—</div></div>
+        <div class="item"><div class="label">Category</div><div class="value" id="category">—</div></div>
+        <div class="item"><div class="label">Priority</div><div class="value" id="priority">—</div></div>
+        <div class="item"><div class="label">Reported loss</div><div class="value" id="loss">—</div></div>
+        <div class="item" style="grid-column:1/-1"><div class="label">Incident description</div><div id="description"></div></div>
+      </div>
+      <p class="muted" style="margin-top:18px">Important: this page displays the assessment stored by your current backend. It does not run a new AI model or create an investigation. The assessment is preliminary and should be reviewed by a human.</p>
+    </section>
+  </main>
+
+  <script>
+    const API = "/api/complaints";
+    const select = document.getElementById("complaintSelect");
+    const notice = document.getElementById("notice");
+    let complaints = [];
+
+    function showNotice(message) {
+      notice.textContent = message;
+      notice.className = "notice error";
+    }
+
+    function displayComplaint(c) {
+      const details = document.getElementById("details");
+      document.getElementById("empty").hidden = Boolean(c);
+      details.hidden = !c;
+      if (!c) return;
+
+      document.getElementById("caseId").textContent = c.id ?? "—";
+      document.getElementById("category").textContent = c.category ?? "—";
+
+      const p = document.getElementById("priority");
+      p.textContent = c.priority ?? "Unknown";
+      p.className = "value pill " + String(c.priority ?? "").toLowerCase();
+
+      document.getElementById("loss").textContent =
+        "₹" + Number(c.lossAmount ?? 0).toLocaleString("en-IN");
+      document.getElementById("description").textContent = c.description ?? "—";
+    }
+
+    async function loadComplaints() {
+      notice.className = "notice";
+      select.replaceChildren(new Option("Loading complaints...", ""));
+
+      try {
+        const response = await fetch(API);
+        if (!response.ok) throw new Error("HTTP " + response.status);
+
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error("Unexpected server response");
+
+        complaints = data;
+        select.replaceChildren(new Option("Select a complaint", ""));
+
+        complaints.forEach(c => {
+          select.add(new Option(
+            "#" + c.id + " — " + (c.category ?? "Unclassified") +
+            " — " + (c.priority ?? "Unknown"),
+            String(c.id)
+          ));
+        });
+
+        if (!complaints.length) {
+          select.replaceChildren(new Option("No complaints found", ""));
+        }
+
+        displayComplaint(null);
+      } catch (error) {
+        select.replaceChildren(new Option("Unable to load complaints", ""));
+        showNotice("Could not retrieve complaints. Check that the complaint service is running. " + error.message);
+      }
+    }
+
+    select.addEventListener("change", () => {
+      const selected = complaints.find(c => String(c.id) === select.value);
+      displayComplaint(selected ?? null);
+    });
+
+    document.getElementById("refreshButton")
+      .addEventListener("click", loadComplaints);
+
+    loadComplaints();
+  </script>
+</body>
+</html>

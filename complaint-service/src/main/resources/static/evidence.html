@@ -1,0 +1,1479 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evidence Management | CyberShield</title>
+
+  <style>
+    :root {
+      --navy: #142448;
+      --navy-hover: #20365f;
+      --navy-active: #263d70;
+      --page-bg: #f4f7fc;
+      --white: #ffffff;
+      --text: #26344d;
+      --muted: #8793a8;
+      --border: #e1e7f0;
+      --primary: #315bea;
+      --green: #16865b;
+      --orange: #c77718;
+      --red: #c53e4d;
+      --shadow: 0 3px 14px rgba(20, 36, 72, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--page-bg);
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    /* Dashboard-style navy sidebar */
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 250px;
+      background: var(--navy);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px 18px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+      margin-bottom: 34px;
+      color: var(--white);
+      font-size: 21px;
+      font-weight: 750;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: #263d70;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .nav-section {
+      margin-bottom: 25px;
+    }
+
+    .nav-heading {
+      color: #aab8d1;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 1.2px;
+      padding: 0 12px;
+      margin-bottom: 10px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 43px;
+      margin: 3px 0;
+      padding: 11px 12px;
+      border-radius: 8px;
+      color: #e0e7f4;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background: var(--navy-hover);
+      color: #fff;
+    }
+
+    .nav-link.active {
+      background: var(--navy-active);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: inset 3px 0 0 #91b2ff;
+    }
+
+    .nav-icon {
+      width: 20px;
+      flex-shrink: 0;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 18px 10px 2px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      color: #c5d0e3;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .sidebar-footer strong {
+      display: block;
+      color: #fff;
+      font-size: 12px;
+      margin-bottom: 3px;
+    }
+
+    /* Main page */
+    .main {
+      min-height: 100vh;
+      margin-left: 250px;
+      padding: 30px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: 27px;
+      color: #192b4d;
+      letter-spacing: -0.6px;
+    }
+
+    .page-subtitle {
+      margin: 8px 0 0;
+      color: #7c899e;
+      font-size: 13px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .btn {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #fff;
+      color: #43516b;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover {
+      filter: brightness(0.97);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-navy {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: #fff;
+    }
+
+    .btn-danger {
+      color: var(--red);
+      border-color: #f0cbd0;
+      background: #fff;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      color: #7d899e;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .stat-value {
+      color: #192b4d;
+      font-size: 28px;
+      font-weight: 750;
+    }
+
+    .stat-note {
+      color: #98a2b3;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 16px;
+      color: #1d2e4e;
+    }
+
+    .panel-description {
+      color: #8994a7;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .panel-body {
+      padding: 22px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(200px, 1.5fr) minmax(150px, 1fr) minmax(150px, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #485771;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-width: 0;
+      padding: 11px 12px;
+      border: 1px solid #dce3ed;
+      border-radius: 7px;
+      background: #fff;
+      color: #26344d;
+      outline: none;
+      font-size: 12px;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #758fe9;
+      box-shadow: 0 0 0 3px rgba(49, 91, 234, 0.08);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 85px;
+      line-height: 1.5;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      white-space: nowrap;
+    }
+
+    th {
+      text-align: left;
+      padding: 13px 17px;
+      color: #7e8ba1;
+      background: #f8faff;
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      letter-spacing: 0.55px;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 15px 17px;
+      border-bottom: 1px solid #edf1f7;
+      font-size: 12px;
+      color: #43516b;
+    }
+
+    tbody tr:hover {
+      background: #fafbfe;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .evidence-name {
+      color: #243653;
+      font-weight: 700;
+    }
+
+    .subtext {
+      margin-top: 5px;
+      color: #909bad;
+      font-size: 11px;
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 20px;
+      padding: 5px 9px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .badge-collected {
+      background: #e7f7ef;
+      color: #16865b;
+    }
+
+    .badge-review {
+      background: #fff3df;
+      color: #a9670d;
+    }
+
+    .badge-verified {
+      background: #e9efff;
+      color: #3156c9;
+    }
+
+    .badge-rejected {
+      background: #ffebee;
+      color: #c53e4d;
+    }
+
+    .badge-default {
+      background: #edf0f5;
+      color: #5d6a80;
+    }
+
+    .row-actions {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .icon-btn {
+      padding: 7px 9px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #52617a;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+
+    .icon-btn:hover {
+      background: #f1f4fa;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 45px 20px;
+      color: #8793a8;
+      font-size: 13px;
+    }
+
+    .empty-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .table-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      padding: 15px 20px;
+      color: #8591a5;
+      font-size: 11px;
+    }
+
+    .message {
+      display: none;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .message.success {
+      display: block;
+      background: #e8f7ef;
+      color: #14764e;
+      border: 1px solid #c8ebd8;
+    }
+
+    .message.error {
+      display: block;
+      background: #fff0f1;
+      color: #b22d3d;
+      border: 1px solid #f2c9cf;
+    }
+
+    .loading {
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    /* Form modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      padding: 22px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(9, 20, 42, 0.6);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 760px;
+      max-height: 92vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 13px;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.22);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 21px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #1d2e4e;
+      font-size: 18px;
+    }
+
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 7px;
+      background: #f0f3f8;
+      color: #43516b;
+      font-size: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 18px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .required {
+      color: var(--red);
+    }
+
+    @media (max-width: 1100px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 18px 14px;
+      }
+
+      .brand {
+        margin-bottom: 20px;
+      }
+
+      .nav-section {
+        margin-bottom: 13px;
+      }
+
+      .nav-link {
+        min-height: 38px;
+      }
+
+      .sidebar-footer {
+        margin-top: 12px;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 20px 14px;
+      }
+
+      .page-title {
+        font-size: 23px;
+      }
+
+      .stats {
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+
+      .panel-body {
+        padding: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats,
+      .filters,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .topbar-actions {
+        width: 100%;
+      }
+
+      .topbar-actions .btn {
+        flex: 1;
+      }
+
+      .modal-backdrop {
+        padding: 10px;
+      }
+
+      .modal-header,
+      .modal-footer {
+        padding: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <a class="brand" href="/">
+      <span class="brand-icon">🛡</span>
+      <span>CyberShield</span>
+    </a>
+
+    <nav>
+      <div class="nav-section">
+        <div class="nav-heading">WORKSPACE</div>
+
+        <a class="nav-link" href="/">
+          <span class="nav-icon">▦</span>
+          <span>Dashboard</span>
+        </a>
+
+        <a class="nav-link" href="/complaint-new.html">
+          <span class="nav-icon">✚</span>
+          <span>File a Complaint</span>
+        </a>
+
+        <a class="nav-link" href="/complaints.html">
+          <span class="nav-icon">▤</span>
+          <span>My Complaints</span>
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-heading">INFORMATION</div>
+
+        <a class="nav-link" href="/ai-analysis.html">
+          <span class="nav-icon">✧</span>
+          <span>AI Assessment</span>
+        </a>
+
+        <a class="nav-link" href="/investigations.html">
+          <span class="nav-icon">🔎</span>
+          <span>Investigations</span>
+        </a>
+
+        <a class="nav-link active" href="/evidence.html" aria-current="page">
+          <span class="nav-icon">📁</span>
+          <span>Evidence</span>
+        </a>
+
+        <a class="nav-link" href="/reports.html">
+          <span class="nav-icon">📊</span>
+          <span>Reports</span>
+        </a>
+
+        <a class="nav-link" href="/historical.html">
+          <span class="nav-icon">◷</span>
+          <span>Historical Complaints</span>
+        </a>
+
+        <a class="nav-link" href="/alerts.html">
+          <span class="nav-icon">🚨</span>
+          <span>Alerts &amp; Escalation</span>
+        </a>
+
+        <a class="nav-link" href="#" id="helpLink">
+          <span class="nav-icon">ⓘ</span>
+          <span>Help &amp; Safety</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <strong>Cybercrime Management</strong>
+      Complaint and investigation workspace
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 class="page-title">Evidence Management</h1>
+        <p class="page-subtitle">
+          Record, organize, and track evidence linked to cybercrime complaints.
+        </p>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn" id="refreshBtn" type="button">↻ Refresh</button>
+        <button class="btn btn-primary" id="addEvidenceBtn" type="button">
+          + Add Evidence
+        </button>
+      </div>
+    </header>
+
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+
+    <section class="stats">
+      <article class="stat-card">
+        <div class="stat-label">Total Evidence Records</div>
+        <div class="stat-value" id="totalCount">0</div>
+        <div class="stat-note">All registered evidence</div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-label">Collected</div>
+        <div class="stat-value" id="collectedCount">0</div>
+        <div class="stat-note">Evidence collected and recorded</div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-label">Under Review</div>
+        <div class="stat-value" id="reviewCount">0</div>
+        <div class="stat-note">Awaiting verification</div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-label">Verified</div>
+        <div class="stat-value" id="verifiedCount">0</div>
+        <div class="stat-note">Verified evidence records</div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Search Evidence</h2>
+          <div class="panel-description">
+            Find evidence by name, complaint ID, reference, or collector.
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <div class="filters">
+          <div class="field">
+            <label for="searchInput">Search</label>
+            <input
+              type="search"
+              id="searchInput"
+              placeholder="Search evidence..."
+            >
+          </div>
+
+          <div class="field">
+            <label for="typeFilter">Evidence Type</label>
+            <select id="typeFilter">
+              <option value="">All types</option>
+              <option value="Document">Document</option>
+              <option value="Screenshot">Screenshot</option>
+              <option value="Email">Email</option>
+              <option value="URL">URL / Website</option>
+              <option value="Transaction">Transaction Record</option>
+              <option value="Device">Device</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter">
+              <option value="">All statuses</option>
+              <option value="Collected">Collected</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Verified">Verified</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+
+          <button class="btn btn-navy" id="clearFiltersBtn" type="button">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Evidence Register</h2>
+          <div class="panel-description">
+            View and update registered evidence records.
+          </div>
+        </div>
+        <span class="badge badge-default" id="resultCount">0 records</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Evidence</th>
+              <th>Complaint ID</th>
+              <th>Type</th>
+              <th>Reference</th>
+              <th>Collected By</th>
+              <th>Date Added</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="evidenceTableBody">
+            <tr>
+              <td colspan="8">
+                <div class="empty-state">
+                  <div class="empty-icon">📁</div>
+                  Loading evidence records...
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span id="tableSummary">Loading records...</span>
+        <span>Evidence Management · CyberShield</span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Add / Edit Evidence Modal -->
+<div class="modal-backdrop" id="evidenceModal" role="dialog"
+     aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add Evidence</h2>
+      <button class="close-btn" id="closeModalBtn" type="button"
+              aria-label="Close dialog">×</button>
+    </div>
+
+    <form id="evidenceForm">
+      <div class="panel-body">
+        <input type="hidden" id="evidenceId">
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="complaintId">Complaint ID <span class="required">*</span></label>
+            <input id="complaintId" name="complaintId" required
+                   placeholder="e.g. CMP-2026-001">
+          </div>
+
+          <div class="field">
+            <label for="evidenceName">Evidence Name <span class="required">*</span></label>
+            <input id="evidenceName" name="evidenceName" required
+                   placeholder="Enter evidence name">
+          </div>
+
+          <div class="field">
+            <label for="evidenceType">Evidence Type <span class="required">*</span></label>
+            <select id="evidenceType" name="evidenceType" required>
+              <option value="">Select type</option>
+              <option value="Document">Document</option>
+              <option value="Screenshot">Screenshot</option>
+              <option value="Email">Email</option>
+              <option value="URL">URL / Website</option>
+              <option value="Transaction">Transaction Record</option>
+              <option value="Device">Device</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="referenceNumber">Reference Number</label>
+            <input id="referenceNumber" name="referenceNumber"
+                   placeholder="Evidence reference">
+          </div>
+
+          <div class="field">
+            <label for="collectedBy">Collected By</label>
+            <input id="collectedBy" name="collectedBy"
+                   placeholder="Officer or staff name">
+          </div>
+
+          <div class="field">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              <option value="Collected">Collected</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Verified">Verified</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="sourceUrl">Source URL</label>
+            <input id="sourceUrl" name="sourceUrl" type="url"
+                   placeholder="https://example.com">
+          </div>
+
+          <div class="field full">
+            <label for="emailInformation">Email Information</label>
+            <textarea id="emailInformation" name="emailInformation"
+                      placeholder="Email sender, recipient, subject, date, or related details"></textarea>
+          </div>
+
+          <div class="field full">
+            <label for="documentReference">Document Reference</label>
+            <input id="documentReference" name="documentReference"
+                   placeholder="File name, document number, or storage reference">
+          </div>
+
+          <div class="field full">
+            <label for="storageLocation">Storage Location</label>
+            <input id="storageLocation" name="storageLocation"
+                   placeholder="Secure storage location or case folder">
+          </div>
+
+          <div class="field full">
+            <label for="description">Description / Notes</label>
+            <textarea id="description" name="description"
+                      placeholder="Describe the evidence and any relevant notes"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" id="cancelModalBtn" type="button">Cancel</button>
+        <button class="btn btn-primary" id="saveEvidenceBtn" type="submit">
+          Save Evidence
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  /*
+   * API routes used by this page:
+   * GET    /api/evidence
+   * POST   /api/evidence
+   * PUT    /api/evidence/{id}
+   *
+   * The backend should return evidence records as JSON.
+   */
+
+  const API_URL = "/api/evidence";
+
+  let evidenceRecords = [];
+  let messageTimer = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  function normalized(value) {
+    return String(value ?? "").trim().toLowerCase();
+  }
+
+  function getId(item) {
+    return item.id ?? item.evidenceId ?? item.evidence_id ?? "";
+  }
+
+  function getDate(item) {
+    const value = item.createdAt ?? item.created_at ??
+                  item.dateAdded ?? item.date_added ??
+                  item.collectedDate ?? item.collected_date;
+
+    if (!value) return "—";
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+  }
+
+  function getStatusClass(status) {
+    switch (normalized(status)) {
+      case "collected":
+        return "badge-collected";
+      case "under review":
+      case "under_review":
+        return "badge-review";
+      case "verified":
+        return "badge-verified";
+      case "rejected":
+        return "badge-rejected";
+      default:
+        return "badge-default";
+    }
+  }
+
+  function showMessage(text, type = "success") {
+    const box = $("message");
+    box.className = "message " + type;
+    box.textContent = text;
+    box.style.display = "block";
+
+    if (messageTimer) clearTimeout(messageTimer);
+
+    messageTimer = setTimeout(() => {
+      box.style.display = "none";
+      box.className = "message";
+    }, 5000);
+  }
+
+  function getRecordType(item) {
+    return item.evidenceType ?? item.evidence_type ?? item.type ?? "Other";
+  }
+
+  function getRecordStatus(item) {
+    return item.status ?? "Collected";
+  }
+
+  function getRecordName(item) {
+    return item.evidenceName ?? item.evidence_name ?? item.name ?? "Untitled evidence";
+  }
+
+  function getComplaintId(item) {
+    return item.complaintId ?? item.complaint_id ?? "—";
+  }
+
+  function updateStatistics(records) {
+    $("totalCount").textContent = records.length;
+
+    $("collectedCount").textContent = records.filter((item) =>
+      normalized(getRecordStatus(item)) === "collected"
+    ).length;
+
+    $("reviewCount").textContent = records.filter((item) =>
+      ["under review", "under_review"].includes(normalized(getRecordStatus(item)))
+    ).length;
+
+    $("verifiedCount").textContent = records.filter((item) =>
+      normalized(getRecordStatus(item)) === "verified"
+    ).length;
+  }
+
+  function getFilteredRecords() {
+    const query = normalized($("searchInput").value);
+    const type = normalized($("typeFilter").value);
+    const status = normalized($("statusFilter").value);
+
+    return evidenceRecords.filter((item) => {
+      const searchable = [
+        getRecordName(item),
+        getComplaintId(item),
+        getRecordType(item),
+        item.referenceNumber ?? item.reference_number,
+        item.collectedBy ?? item.collected_by,
+        item.description,
+        item.documentReference ?? item.document_reference
+      ].map(normalized).join(" ");
+
+      const matchesQuery = !query || searchable.includes(query);
+      const matchesType = !type || normalized(getRecordType(item)) === type;
+      const matchesStatus = !status || normalized(getRecordStatus(item)) === status;
+
+      return matchesQuery && matchesType && matchesStatus;
+    });
+  }
+
+  function renderTable() {
+    const records = getFilteredRecords();
+    const tbody = $("evidenceTableBody");
+
+    $("resultCount").textContent =
+      `${records.length} record${records.length === 1 ? "" : "s"}`;
+
+    $("tableSummary").textContent =
+      `Showing ${records.length} of ${evidenceRecords.length} evidence records`;
+
+    if (!records.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8">
+            <div class="empty-state">
+              <div class="empty-icon">📂</div>
+              <div><strong>No evidence records found</strong></div>
+              <div style="margin-top:7px">
+                Add evidence or change your search filters.
+              </div>
+            </div>
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = records.map((item) => {
+      const id = getId(item);
+      const name = getRecordName(item);
+      const complaint = getComplaintId(item);
+      const type = getRecordType(item);
+      const status = getRecordStatus(item);
+      const reference = item.referenceNumber ?? item.reference_number ?? "—";
+      const collector = item.collectedBy ?? item.collected_by ?? "—";
+      const date = getDate(item);
+
+      return `
+        <tr>
+          <td>
+            <div class="evidence-name">${escapeHTML(name)}</div>
+            <div class="subtext">ID: ${escapeHTML(id || "—")}</div>
+          </td>
+          <td>${escapeHTML(complaint)}</td>
+          <td>${escapeHTML(type)}</td>
+          <td>${escapeHTML(reference)}</td>
+          <td>${escapeHTML(collector)}</td>
+          <td>${escapeHTML(date)}</td>
+          <td>
+            <span class="badge ${getStatusClass(status)}">
+              ${escapeHTML(status)}
+            </span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button class="icon-btn" type="button"
+                      data-action="edit" data-id="${escapeHTML(id)}">
+                Edit
+              </button>
+              <button class="icon-btn" type="button"
+                      data-action="status" data-id="${escapeHTML(id)}">
+                Status
+              </button>
+            </div>
+          </td>
+        </tr>`;
+    }).join("");
+  }
+
+  async function loadEvidence() {
+    const refreshButton = $("refreshBtn");
+    refreshButton.disabled = true;
+    refreshButton.textContent = "Loading...";
+
+    try {
+      const response = await fetch(API_URL, {
+        headers: { "Accept": "application/json" }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server returned HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data)) {
+        evidenceRecords = data;
+      } else if (Array.isArray(data.evidence)) {
+        evidenceRecords = data.evidence;
+      } else if (Array.isArray(data.records)) {
+        evidenceRecords = data.records;
+      } else if (Array.isArray(data.content)) {
+        evidenceRecords = data.content;
+      } else {
+        throw new Error("Unexpected response format from the evidence API.");
+      }
+
+      updateStatistics(evidenceRecords);
+      renderTable();
+    } catch (error) {
+      console.error("Failed to load evidence:", error);
+      $("evidenceTableBody").innerHTML = `
+        <tr>
+          <td colspan="8">
+            <div class="empty-state">
+              <div class="empty-icon">⚠</div>
+              <strong>Could not load evidence records</strong>
+              <div style="margin-top:7px">
+                Check that the backend is running and
+                <code>/api/evidence</code> is available.
+              </div>
+            </div>
+          </td>
+        </tr>`;
+      $("tableSummary").textContent = "Unable to load records";
+      showMessage("Could not load evidence: " + error.message, "error");
+    } finally {
+      refreshButton.disabled = false;
+      refreshButton.textContent = "↻ Refresh";
+    }
+  }
+
+  function openModal(item = null) {
+    $("evidenceForm").reset();
+    $("evidenceId").value = item ? getId(item) : "";
+    $("modalTitle").textContent = item ? "Edit Evidence" : "Add Evidence";
+    $("saveEvidenceBtn").textContent = item ? "Update Evidence" : "Save Evidence";
+
+    if (item) {
+      $("complaintId").value =
+        item.complaintId ?? item.complaint_id ?? "";
+      $("evidenceName").value =
+        item.evidenceName ?? item.evidence_name ?? item.name ?? "";
+      $("evidenceType").value = getRecordType(item);
+      $("referenceNumber").value =
+        item.referenceNumber ?? item.reference_number ?? "";
+      $("collectedBy").value =
+        item.collectedBy ?? item.collected_by ?? "";
+      $("status").value = getRecordStatus(item);
+      $("sourceUrl").value = item.sourceUrl ?? item.source_url ?? "";
+      $("emailInformation").value =
+        item.emailInformation ?? item.email_information ?? "";
+      $("documentReference").value =
+        item.documentReference ?? item.document_reference ?? "";
+      $("storageLocation").value =
+        item.storageLocation ?? item.storage_location ?? "";
+      $("description").value = item.description ?? "";
+    } else {
+      $("status").value = "Collected";
+    }
+
+    $("evidenceModal").classList.add("open");
+    document.body.style.overflow = "hidden";
+    $("complaintId").focus();
+  }
+
+  function closeModal() {
+    $("evidenceModal").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function formToPayload() {
+    return {
+      complaintId: $("complaintId").value.trim(),
+      evidenceName: $("evidenceName").value.trim(),
+      evidenceType: $("evidenceType").value,
+      referenceNumber: $("referenceNumber").value.trim(),
+      collectedBy: $("collectedBy").value.trim(),
+      status: $("status").value,
+      sourceUrl: $("sourceUrl").value.trim(),
+      emailInformation: $("emailInformation").value.trim(),
+      documentReference: $("documentReference").value.trim(),
+      storageLocation: $("storageLocation").value.trim(),
+      description: $("description").value.trim()
+    };
+  }
+
+  async function saveEvidence(event) {
+    event.preventDefault();
+
+    const id = $("evidenceId").value;
+    const isEdit = id !== "";
+    const url = isEdit
+      ? `${API_URL}/${encodeURIComponent(id)}`
+      : API_URL;
+
+    const button = $("saveEvidenceBtn");
+    button.disabled = true;
+    button.textContent = isEdit ? "Updating..." : "Saving...";
+
+    try {
+      const response = await fetch(url, {
+        method: isEdit ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(formToPayload())
+      });
+
+      if (!response.ok) {
+        let detail = "";
+        try {
+          const errorBody = await response.json();
+          detail = errorBody.message || errorBody.error || "";
+        } catch (_) {
+          // The response may not contain JSON.
+        }
+
+        throw new Error(detail || `Server returned HTTP ${response.status}`);
+      }
+
+      closeModal();
+      showMessage(
+        isEdit
+          ? "Evidence record updated successfully."
+          : "Evidence record added successfully.",
+        "success"
+      );
+
+      await loadEvidence();
+    } catch (error) {
+      console.error("Failed to save evidence:", error);
+      showMessage("Could not save evidence: " + error.message, "error");
+    } finally {
+      button.disabled = false;
+      button.textContent = isEdit ? "Update Evidence" : "Save Evidence";
+    }
+  }
+
+  function editEvidence(id) {
+    const item = evidenceRecords.find((record) =>
+      String(getId(record)) === String(id)
+    );
+
+    if (!item) {
+      showMessage("Could not find that evidence record.", "error");
+      return;
+    }
+
+    openModal(item);
+  }
+
+  async function updateEvidenceStatus(id) {
+    const item = evidenceRecords.find((record) =>
+      String(getId(record)) === String(id)
+    );
+
+    if (!item) {
+      showMessage("Could not find that evidence record.", "error");
+      return;
+    }
+
+    const options = ["Collected", "Under Review", "Verified", "Rejected"];
+    const current = getRecordStatus(item);
+    const choice = prompt(
+      "Enter the new status:\nCollected\nUnder Review\nVerified\nRejected",
+      current
+    );
+
+    if (choice === null) return;
+
+    const nextStatus = options.find(
+      (option) => normalized(option) === normalized(choice)
+    );
+
+    if (!nextStatus) {
+      showMessage("Invalid status. Choose one of the listed statuses.", "error");
+      return;
+    }
+
+    const idValue = getId(item);
+
+    const payload = {
+      complaintId: item.complaintId ?? item.complaint_id ?? "",
+      evidenceName: item.evidenceName ?? item.evidence_name ?? item.name ?? "",
+      evidenceType: getRecordType(item),
+      referenceNumber: item.referenceNumber ?? item.reference_number ?? "",
+      collectedBy: item.collectedBy ?? item.collected_by ?? "",
+      status: nextStatus,
+      sourceUrl: item.sourceUrl ?? item.source_url ?? "",
+      emailInformation: item.emailInformation ?? item.email_information ?? "",
+      documentReference: item.documentReference ?? item.document_reference ?? "",
+      storageLocation: item.storageLocation ?? item.storage_location ?? "",
+      description: item.description ?? ""
+    };
+
+    try {
+      const response = await fetch(
+        `${API_URL}/${encodeURIComponent(idValue)}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Server returned HTTP ${response.status}`);
+      }
+
+      showMessage("Evidence status updated successfully.", "success");
+      await loadEvidence();
+    } catch (error) {
+      console.error("Failed to update evidence status:", error);
+      showMessage("Could not update status: " + error.message, "error");
+    }
+  }
+
+  // Navigation and modal events
+  $("addEvidenceBtn").addEventListener("click", () => openModal());
+  $("refreshBtn").addEventListener("click", loadEvidence);
+  $("closeModalBtn").addEventListener("click", closeModal);
+  $("cancelModalBtn").addEventListener("click", closeModal);
+  $("evidenceForm").addEventListener("submit", saveEvidence);
+
+  $("evidenceModal").addEventListener("click", (event) => {
+    if (event.target === $("evidenceModal")) closeModal();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeModal();
+  });
+
+  $("searchInput").addEventListener("input", renderTable);
+  $("typeFilter").addEventListener("change", renderTable);
+  $("statusFilter").addEventListener("change", renderTable);
+
+  $("clearFiltersBtn").addEventListener("click", () => {
+    $("searchInput").value = "";
+    $("typeFilter").value = "";
+    $("statusFilter").value = "";
+    renderTable();
+  });
+
+  $("evidenceTableBody").addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const id = button.dataset.id;
+
+    if (button.dataset.action === "edit") {
+      editEvidence(id);
+    } else if (button.dataset.action === "status") {
+      updateEvidenceStatus(id);
+    }
+  });
+
+  $("helpLink").addEventListener("click", (event) => {
+    event.preventDefault();
+    showMessage(
+      "For assistance, contact your Cybercrime Management administrator.",
+      "success"
+    );
+  });
+
+  // Load initial evidence records
+  loadEvidence();
+</script>
+</body>
+</html>

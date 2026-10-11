@@ -1,0 +1,529 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield | Login</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #071426, #102d50, #075985);
+            padding: 20px;
+            color: #eaf2ff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 35px;
+            background: rgba(9, 24, 44, 0.96);
+            border: 1px solid #24476b;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo-icon {
+            font-size: 42px;
+            margin-bottom: 8px;
+        }
+
+        .logo h1 {
+            font-size: 29px;
+            color: #38bdf8;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #a9bfd8;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            padding: 5px;
+            border-radius: 10px;
+            background: #10253e;
+        }
+
+        .tab {
+            flex: 1;
+            border: none;
+            border-radius: 7px;
+            padding: 11px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #b8c9dc;
+            background: transparent;
+        }
+
+        .tab.active {
+            background: #0284c7;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d8e7f8;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            background: #0b1c31;
+            border: 1px solid #31516f;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+        }
+
+        input::placeholder {
+            color: #8299b3;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 14px;
+            background: #0284c7;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #0369a1;
+        }
+
+        .message {
+            display: none;
+            padding: 12px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .message.success {
+            display: block;
+            color: #bbf7d0;
+            background: #123b31;
+            border: 1px solid #166534;
+        }
+
+        .message.error {
+            display: block;
+            color: #fecaca;
+            background: #451a24;
+            border: 1px solid #991b1b;
+        }
+
+        .demo-info {
+            margin-top: 22px;
+            padding: 13px;
+            background: #10253e;
+            border-radius: 8px;
+            color: #b8c9dc;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .demo-info strong {
+            color: #38bdf8;
+        }
+
+        .footer {
+            margin-top: 22px;
+            text-align: center;
+            font-size: 12px;
+            color: #8299b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <header class="logo">
+            <div class="logo-icon">🛡️</div>
+            <h1>CyberShield</h1>
+            <p>Cyber Crime Complaint Management System</p>
+        </header>
+
+        <div class="tabs">
+            <button type="button" id="loginTab" class="tab active">
+                Login
+            </button>
+
+            <button type="button" id="registerTab" class="tab">
+                Create Account
+            </button>
+        </div>
+
+        <div id="message" class="message" role="alert"></div>
+
+        <!-- Login form -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginUsername">Username or Email</label>
+                <input
+                    type="text"
+                    id="loginUsername"
+                    placeholder="Enter your username or email"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Login to CyberShield
+            </button>
+        </form>
+
+        <!-- Registration form -->
+        <form id="registerForm" class="hidden">
+            <div class="form-group">
+                <label for="registerUsername">Username</label>
+                <input
+                    type="text"
+                    id="registerUsername"
+                    placeholder="Choose a username"
+                    minlength="3"
+                    maxlength="40"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Create a password (minimum 6 characters)"
+                    minlength="6"
+                    autocomplete="new-password"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Enter your password again"
+                    minlength="6"
+                    autocomplete="new-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Create Account
+            </button>
+        </form>
+
+        <div class="demo-info">
+            <strong>Demo login</strong><br>
+            Username: <strong>admin</strong><br>
+            Password: <strong>admin123</strong><br>
+            <small>Or create an account using the form above.</small>
+        </div>
+
+        <div class="footer">
+            CyberShield &copy; 2026 | Cyber Crime Management
+        </div>
+    </main>
+
+    <script>
+        const loginTab = document.getElementById("loginTab");
+        const registerTab = document.getElementById("registerTab");
+
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
+
+        const message = document.getElementById("message");
+
+        const ACCOUNTS_KEY = "cyberShieldDemoAccounts";
+        const SESSION_KEY = "cyberShieldDemoSession";
+
+        // Demo account for testing.
+        // This is browser-only authentication, not production security.
+        function getAccounts() {
+            try {
+                const stored = localStorage.getItem(ACCOUNTS_KEY);
+                const accounts = stored ? JSON.parse(stored) : [];
+
+                return Array.isArray(accounts) ? accounts : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveAccounts(accounts) {
+            localStorage.setItem(
+                ACCOUNTS_KEY,
+                JSON.stringify(accounts)
+            );
+        }
+
+        function showMessage(text, type) {
+            message.textContent = text;
+            message.className = "message " + type;
+        }
+
+        function clearMessage() {
+            message.textContent = "";
+            message.className = "message";
+        }
+
+        function showLogin() {
+            loginForm.classList.remove("hidden");
+            registerForm.classList.add("hidden");
+
+            loginTab.classList.add("active");
+            registerTab.classList.remove("active");
+
+            clearMessage();
+        }
+
+        function showRegister() {
+            registerForm.classList.remove("hidden");
+            loginForm.classList.add("hidden");
+
+            registerTab.classList.add("active");
+            loginTab.classList.remove("active");
+
+            clearMessage();
+        }
+
+        loginTab.addEventListener("click", showLogin);
+        registerTab.addEventListener("click", showRegister);
+
+        function redirectToDashboard(account) {
+            try {
+                sessionStorage.setItem(
+                    SESSION_KEY,
+                    JSON.stringify({
+                        username: account.username,
+                        loggedIn: true
+                    })
+                );
+
+                // Keep your existing dashboard as index.html.
+                window.location.replace("/index.html");
+            } catch (error) {
+                showMessage(
+                    "Unable to start your session. Please try again.",
+                    "error"
+                );
+            }
+        }
+
+        // Login
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            clearMessage();
+
+            const usernameOrEmail = document
+                .getElementById("loginUsername")
+                .value.trim()
+                .toLowerCase();
+
+            const password = document
+                .getElementById("loginPassword")
+                .value;
+
+            // Built-in demo account.
+            if (
+                usernameOrEmail === "admin" &&
+                password === "admin123"
+            ) {
+                redirectToDashboard({
+                    username: "admin"
+                });
+                return;
+            }
+
+            const accounts = getAccounts();
+
+            const account = accounts.find(function (item) {
+                return (
+                    (
+                        item.username.toLowerCase() === usernameOrEmail ||
+                        item.email.toLowerCase() === usernameOrEmail
+                    ) &&
+                    item.password === password
+                );
+            });
+
+            if (!account) {
+                showMessage(
+                    "Invalid username/email or password.",
+                    "error"
+                );
+                return;
+            }
+
+            redirectToDashboard(account);
+        });
+
+        // Create account
+        registerForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            clearMessage();
+
+            const username = document
+                .getElementById("registerUsername")
+                .value.trim();
+
+            const email = document
+                .getElementById("registerEmail")
+                .value.trim();
+
+            const password = document
+                .getElementById("registerPassword")
+                .value;
+
+            const confirmPassword = document
+                .getElementById("confirmPassword")
+                .value;
+
+            if (username.length < 3) {
+                showMessage(
+                    "Username must contain at least 3 characters.",
+                    "error"
+                );
+                return;
+            }
+
+            if (password.length < 6) {
+                showMessage(
+                    "Password must contain at least 6 characters.",
+                    "error"
+                );
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage(
+                    "Passwords do not match.",
+                    "error"
+                );
+                return;
+            }
+
+            const accounts = getAccounts();
+
+            const usernameExists = accounts.some(function (item) {
+                return item.username.toLowerCase() === username.toLowerCase();
+            });
+
+            const emailExists = accounts.some(function (item) {
+                return item.email.toLowerCase() === email.toLowerCase();
+            });
+
+            if (username.toLowerCase() === "admin" || usernameExists) {
+                showMessage(
+                    "That username is already in use.",
+                    "error"
+                );
+                return;
+            }
+
+            if (emailExists) {
+                showMessage(
+                    "An account with that email already exists.",
+                    "error"
+                );
+                return;
+            }
+
+            const newAccount = {
+                username: username,
+                email: email,
+                password: password
+            };
+
+            accounts.push(newAccount);
+
+            try {
+                saveAccounts(accounts);
+                redirectToDashboard(newAccount);
+            } catch (error) {
+                showMessage(
+                    "Could not save your account in this browser.",
+                    "error"
+                );
+            }
+        });
+    </script>
+</body>
+</html>

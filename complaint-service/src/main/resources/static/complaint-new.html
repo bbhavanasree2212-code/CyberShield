@@ -1,0 +1,557 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield | File a Complaint</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f7fc;
+            color: #1b2a41;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .app { display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            padding: 24px 18px;
+            background: #142542;
+            color: white;
+        }
+
+        .brand {
+            font-size: 25px;
+            font-weight: bold;
+            margin: 12px 8px 44px;
+        }
+
+        .nav-label {
+            margin: 25px 12px 12px;
+            color: #a9bfdc;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .nav a {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+            margin: 5px 0;
+            border-radius: 9px;
+            color: #edf5ff;
+        }
+
+        .nav a:hover, .nav a.active { background: #294267; }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 35px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        h1 { margin: 0 0 10px; font-size: 32px; }
+        h2 { margin-top: 0; }
+
+        .muted { color: #647894; line-height: 1.6; }
+
+        .portal {
+            background: white;
+            border: 1px solid #dce6f2;
+            border-radius: 30px;
+            padding: 12px 17px;
+        }
+
+        .notice {
+            padding: 15px;
+            margin-bottom: 22px;
+            border: 1px solid #bfdcff;
+            border-radius: 10px;
+            background: #eef6ff;
+            color: #174b8f;
+            line-height: 1.6;
+        }
+
+        .card {
+            max-width: 950px;
+            padding: 28px;
+            background: white;
+            border: 1px solid #dce6f2;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px #1d35570a;
+        }
+
+        .field { margin: 19px 0; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cbd8e8;
+            border-radius: 8px;
+            font: inherit;
+            background: white;
+            color: #1b2a41;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid #c5e3ff;
+            border-color: #1677c8;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button, .btn {
+            display: inline-block;
+            padding: 12px 17px;
+            border: none;
+            border-radius: 8px;
+            background: #1677c8;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .secondary {
+            background: #eaf2fb;
+            color: #23466d;
+            border: 1px solid #d4e2f2;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 18px;
+            border: 1px solid #dce6f2;
+            border-radius: 10px;
+            background: #f9fbfe;
+        }
+
+        .result[hidden] { display: none; }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .low { background: #e6f6ec; color: #18794e; }
+        .medium { background: #fff4d6; color: #8a5b00; }
+        .high { background: #ffebe9; color: #b42318; }
+
+        .message {
+            display: none;
+            padding: 13px;
+            margin-top: 16px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .message.show { display: block; }
+        .success { background: #eaf8f0; color: #166534; }
+        .error { background: #fff0ef; color: #9b1c16; }
+
+        @media(max-width: 760px) {
+            .app { display: block; }
+            .sidebar { width: 100%; padding: 15px; }
+            .brand { margin: 8px; }
+            .nav { display: flex; overflow-x: auto; }
+            .nav-label { display: none; }
+            .nav a { white-space: nowrap; }
+            .main { padding: 20px 14px; }
+            .header { align-items: flex-start; flex-direction: column; }
+            .card { padding: 20px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app">
+
+    <aside class="sidebar">
+        <div class="brand">🛡️ CyberShield</div>
+
+        <div class="nav-label">WORKSPACE</div>
+        <nav class="nav">
+            <a href="/index.html">▦ Dashboard</a>
+            <a href="/complaint-new.html" class="active">✚ File a Complaint</a>
+            <a href="/complaints.html">▤ My Complaints</a>
+        </nav>
+
+        <div class="nav-label">INFORMATION</div>
+        <nav class="nav">
+            <a href="/ai-analysis.html">✧ AI Assessment</a>
+            <a href="/investigations.html">🔎 Investigations</a>
+            <a href="/evidence.html">📁 Evidence</a>
+            <a href="/reports.html">📊 Reports</a>
+            <a href="/historical.html">◷ Historical Complaints</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <div>
+                <h1>File a Complaint</h1>
+                <p class="muted">
+                    Submit incident details for recording and preliminary review.
+                </p>
+            </div>
+            <div class="portal">🛡️ Cybercrime Portal</div>
+        </header>
+
+        <div class="notice">
+            <strong>Privacy reminder:</strong>
+            Never enter your password, banking PIN, or OTP in the incident description.
+            Save transaction references and other relevant evidence securely.
+        </div>
+
+        <section class="card">
+            <h2>Complaint Details</h2>
+            <p class="muted">
+                Fields marked with * are required.
+            </p>
+
+            <form id="complaintForm">
+                <div class="field">
+                    <label for="fullName">Complainant Name (optional)</label>
+                    <input id="fullName" maxlength="100"
+                           placeholder="Enter your name">
+                </div>
+
+                <div class="field">
+                    <label for="contact">Email or Phone (optional)</label>
+                    <input id="contact" maxlength="120"
+                           placeholder="Enter your contact details">
+                </div>
+
+                <div class="field">
+                    <label for="category">Incident Type *</label>
+                    <select id="category" required>
+                        <option value="">Select incident type</option>
+                        <option>Online Fraud</option>
+                        <option>UPI / Banking Fraud</option>
+                        <option>Phishing</option>
+                        <option>Identity Theft</option>
+                        <option>Cyber Harassment</option>
+                        <option>Account Hacking</option>
+                        <option>Ransomware / Malware</option>
+                        <option>Investment / Crypto Scam</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="incidentDate">Incident Date (optional)</label>
+                    <input id="incidentDate" type="date">
+                </div>
+
+                <div class="field">
+                    <label for="loss">Reported Financial Loss (₹) *</label>
+                    <input id="loss" type="number" min="0"
+                           step="0.01" value="0" required>
+                </div>
+
+                <div class="field">
+                    <label for="description">Incident Description *</label>
+                    <textarea id="description" required minlength="10"
+                        placeholder="Describe what happened, when it happened, how contact was made, transaction references, website or app involved, and actions already taken."></textarea>
+                </div>
+
+                <div id="assessmentPreview" class="result" hidden></div>
+                <div id="formMessage" class="message" role="status"></div>
+
+                <div class="buttons">
+                    <button type="button" id="previewBtn" class="secondary">
+                        Preview Priority
+                    </button>
+
+                    <button type="submit">
+                        Submit Complaint
+                    </button>
+
+                    <button type="reset" class="secondary">
+                        Clear Form
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+
+<script>
+    const STORAGE_KEY = "cyberShieldComplaints";
+
+    function readComplaints() {
+        try {
+            const data = JSON.parse(
+                localStorage.getItem(STORAGE_KEY) || "[]"
+            );
+            return Array.isArray(data) ? data : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    function saveComplaints(items) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
+    }
+
+    function severityClass(level) {
+        return String(level).toLowerCase();
+    }
+
+    function assessIncident(description, loss, category) {
+        const text = (description + " " + category).toLowerCase();
+
+        const seriousTerms = [
+            "phishing", "upi", "otp", "unauthorized transaction",
+            "bank account", "identity theft", "ransomware",
+            "blackmail", "extortion", "malware", "crypto",
+            "credit card", "debit card", "account takeover"
+        ];
+
+        const concernTerms = [
+            "fraud", "scam", "password", "fake profile",
+            "harassment", "suspicious link", "impersonation",
+            "data leak", "online shopping"
+        ];
+
+        const seriousFound = seriousTerms.filter(term => text.includes(term));
+        const concernFound = concernTerms.filter(term => text.includes(term));
+
+        const reasons = [];
+        let score = 0;
+
+        if (seriousFound.length) {
+            score += Math.min(3, seriousFound.length);
+            reasons.push(
+                "Potential serious indicators found: " +
+                seriousFound.slice(0, 5).join(", ") + "."
+            );
+        }
+
+        if (concernFound.length) {
+            score += Math.min(2, concernFound.length);
+            reasons.push(
+                "Additional indicators found: " +
+                concernFound.slice(0, 5).join(", ") + "."
+            );
+        }
+
+        const amount = Number(loss) || 0;
+
+        if (amount >= 100000) {
+            score += 3;
+            reasons.push("Reported financial loss is ₹1,00,000 or more.");
+        } else if (amount >= 10000) {
+            score += 2;
+            reasons.push("Reported financial loss is ₹10,000 or more.");
+        } else if (amount > 0) {
+            score += 1;
+            reasons.push("A financial loss was reported.");
+        }
+
+        let level = "Low";
+
+        if (score >= 4) {
+            level = "High";
+        } else if (score >= 2) {
+            level = "Medium";
+        }
+
+        if (!reasons.length) {
+            reasons.push(
+                "No listed risk indicators or financial loss were detected."
+            );
+        }
+
+        reasons.push(
+            "This is a preliminary rule-based screening result. " +
+            "A qualified investigator must verify the details."
+        );
+
+        return { level, score, reasons };
+    }
+
+    function displayMessage(text, type) {
+        const message = document.getElementById("formMessage");
+        message.textContent = text;
+        message.className = "message show " + type;
+    }
+
+    function previewAssessment() {
+        const description = document.getElementById("description").value.trim();
+        const category = document.getElementById("category").value;
+        const loss = Number(document.getElementById("loss").value);
+        const box = document.getElementById("assessmentPreview");
+
+        if (description.length < 10) {
+            box.hidden = false;
+            box.innerHTML =
+                "<h3>More details needed</h3>" +
+                "<p>Please enter at least 10 characters describing the incident.</p>";
+            return null;
+        }
+
+        if (!Number.isFinite(loss) || loss < 0) {
+            box.hidden = false;
+            box.textContent = "Please enter a valid non-negative financial loss.";
+            return null;
+        }
+
+        const assessment = assessIncident(description, loss, category);
+
+        box.hidden = false;
+        box.innerHTML = `
+            <h3>Preliminary Priority:
+                <span class="badge ${severityClass(assessment.level)}">
+                    ${assessment.level}
+                </span>
+            </h3>
+            <strong>Why this result?</strong>
+            <ul>
+                ${assessment.reasons.map(reason =>
+                    `<li>${escapeHtml(reason)}</li>`
+                ).join("")}
+            </ul>
+        `;
+
+        return assessment;
+    }
+
+    document.getElementById("previewBtn").addEventListener(
+        "click",
+        previewAssessment
+    );
+
+    document.getElementById("complaintForm").addEventListener(
+        "submit",
+        function (event) {
+            event.preventDefault();
+
+            const description =
+                document.getElementById("description").value.trim();
+
+            const category =
+                document.getElementById("category").value;
+
+            const loss =
+                Number(document.getElementById("loss").value);
+
+            if (description.length < 10) {
+                displayMessage(
+                    "Please provide at least 10 characters in the description.",
+                    "error"
+                );
+                return;
+            }
+
+            if (!category) {
+                displayMessage("Please select an incident type.", "error");
+                return;
+            }
+
+            if (!Number.isFinite(loss) || loss < 0) {
+                displayMessage(
+                    "Enter a valid non-negative financial loss.",
+                    "error"
+                );
+                return;
+            }
+
+            const assessment = assessIncident(description, loss, category);
+
+            const complaint = {
+                id: "CS-" + Date.now().toString().slice(-8),
+                name: document.getElementById("fullName").value.trim(),
+                contact: document.getElementById("contact").value.trim(),
+                category: category,
+                incidentDate: document.getElementById("incidentDate").value,
+                description: description,
+                loss: loss,
+                severity: assessment.level,
+                reasons: assessment.reasons,
+                status: "Pending",
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                const complaints = readComplaints();
+                complaints.push(complaint);
+                saveComplaints(complaints);
+
+                displayMessage(
+                    "Complaint submitted. Reference: " + complaint.id +
+                    ". Preliminary priority: " + complaint.severity + ".",
+                    "success"
+                );
+
+                document.getElementById("complaintForm").reset();
+                document.getElementById("assessmentPreview").hidden = true;
+            } catch (error) {
+                console.error(error);
+                displayMessage(
+                    "Could not save the complaint in this browser.",
+                    "error"
+                );
+            }
+        }
+    );
+
+    document.getElementById("complaintForm").addEventListener(
+        "reset",
+        function () {
+            document.getElementById("assessmentPreview").hidden = true;
+            const message = document.getElementById("formMessage");
+            message.className = "message";
+            message.textContent = "";
+        }
+    );
+</script>
+</body>
+</html>

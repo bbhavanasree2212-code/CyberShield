@@ -1,0 +1,33 @@
+
+[
+  {
+    "caseId": "CC101",
+    "description": "Victim received a fake bank link and shared an OTP",
+    "category": "Phishing",
+    "lossAmount": 15000
+  },
+  {
+    "caseId": "CC102",
+    "description": "Unauthorized money transfer from a bank account",
+    "category": "Financial Fraud",
+    "lossAmount": 45000
+  },
+  {
+    "caseId": "CC103",
+    "description": "Fraudster impersonated a customer and stole identity details",
+    "category": "Identity Theft",
+    "lossAmount": 5000
+  },
+  {
+    "caseId": "CC104",
+    "description": "Fake phishing message asked the victim to enter bank credentials",
+    "category": "Phishing",
+    "lossAmount": 8000
+  },
+  {
+    "caseId": "CC105",
+    "description": "Victim reported that their online account was hacked",
+    "category": "Account Compromise",
+    "lossAmount": 12000
+  }
+]
